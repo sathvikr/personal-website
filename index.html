@@ -1,44 +1,86 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Sathvik Redrouthu's Homepage</title>
-    </head>
-    <body>
-        <nav style="text-align: center;"><p><a href="index.html">Home</a> 
-            | <a href="projects.html">Projects</a> 
-            | <a href="thoughts.html">Thoughts</a> 
-        </nav>
-        <div style="margin: 0 500px 0 500px;">
-            <div style="text-align: center;">
-                <h1>I’m Sathvik, a high school grad on a gap year!</h1>
-                <img src="media/pg.jpg", width="400px">
-                <p><i>Teaching Paul Graham gang signs...</i></p>
-            </div>
-            <p>I’m launching <a href="https://getinstachip.com">Instachip</a> with Jag Maddipatla.
-                Instachip is a tool that lets you "pip install" chip components.
-            </p>
-            <p>If you're into chips, FPGAs, or being a miscellaneous hardware geek, check out <a href="https://github.com/getinstachip/openchips">OpenChips</a>! It's an open source repository for chip design.
-                Chips are becoming very important and <a href="https://github.com/getinstachip/openchips">this repository</a> could play an interesting role...
-            </p>
-            <hr>
-            <p>Previously, I designed semiconductor chips for ~3 years. Jag and I built Tachyon, a chip for O(1) matrix-vector multiplication, and designed the Vector Processing Unit (US18119437, pending).</p>
-            
-            <p>I also designed and implemented a <a href="https://arxiv.org/pdf/2208.06749">programming language for optical computers</a>. Specifically, it is a tensor algebra DSL that compiles to an optical processor and stores sparse tensors better than NumPy.
-            
-                Before this "optical language" (wow!), I implemented a <a href="https://github.com/sathvikr/ai-stuff/tree/main/regex_compiler%20(finite%20automata%20%2B%20browzowski%20derivative)">
-                regex interpreter using Brzozowski derivatives</a>, a <a href="https://github.com/sathvikr/nand2tetris/tree/main/JackCompiler/src">
-                    compiler for the Jack programming language</a> (following <a href="https://www.amazon.com/Elements-Computing-Systems-Building-Principles/dp/0262640686">
-                        this textbook</a>), and an interpreter for RED, my first programming language, which I made when I was 12.</p>
-            
-            <p><a href="projects.html">See more!!</a></p>
-            <p><b>Second favorite book:</b> <i>Zero to One</i>, Peter Thiel</p>
-            <p><b>Projects I’m procrastinating, due to the startup grind:</b> Photonic backend for <a href="https://github.com/apache/tvm">Apache TVM</a>, Verilog compiler, no-code Verilog editor</p>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sathvik Redrouthu's Homepage</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        nav {
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        .center-content {
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px 0;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="projects.html">Projects</a> |
+        <a href="thoughts.html">Thoughts</a>
+    </nav>
+    <div class="container">
+        <div class="center-content">
+            <h1>I'm Sathvik, a high school grad on a gap year!</h1>
+            <img src="media/pg.jpg" alt="Teaching Paul Graham gang signs" width="400">
+            <p><i>Teaching Paul Graham gang signs...</i></p>
         </div>
-        <footer style="text-align: center; margin-top: 30px;">
-            <p><a href="https://x.com/_sathvikr">Twitter</a> 
-                | <a href="https://www.linkedin.com/in/sathvik-redrouthu-28456919b/">LinkedIn</a> 
-                | <a href="https://github.com/sathvikr">GitHub</a> 
-                | <a href="mailto:sathvik.redrouthu@gmail.com">Email</a></p>
-        </footer>
-    </body>
+        <p>I'm launching <a href="https://getinstachip.com">Instachip</a> with Jag Maddipatla.
+            Instachip is a tool that lets you <code>pip install</code> third-party components into your chip design or FPGA. Try the open-source version <a href="https://github.com/getinstachip/vpm">here</a>!
+        </p>
+        <p>I'm also behind the Verilog community's <a href="https://www.verilogmodules.org">module registry</a>.
+        </p>
+        <hr>
+        <p>Previously, I designed semiconductor chips for ~3 years. Jag and I built Tachyon, a chip for O(1) matrix-vector multiplication, and designed the Vector Processing Unit (US18119437, pending).</p>
+        
+        <p>I also designed and implemented a <a href="https://arxiv.org/pdf/2208.06749">programming language for optical computers</a>. Specifically, it is a tensor algebra DSL that compiles to an optical processor and stores sparse tensors better than NumPy.</p>
+        
+        <p>Before this "optical language", I implemented a <a href="https://github.com/sathvikr/ai-stuff/tree/main/regex_compiler%20(finite%20automata%20%2B%20browzowski%20derivative)">
+            regex interpreter using Brzozowski derivatives</a>, a <a href="https://github.com/sathvikr/nand2tetris/tree/main/JackCompiler/src">
+                compiler for the Jack programming language</a> (following <a href="https://www.amazon.com/Elements-Computing-Systems-Building-Principles/dp/0262640686">
+                    this textbook</a>), and an interpreter for RED, my first programming language, which I made when I was 12.</p>
+        
+        <p><a href="projects.html">See more!!</a></p>
+        <p><b>Second favorite book:</b> <i>Zero to One</i>, Peter Thiel</p>
+        <p><b>Projects I'm procrastinating, due to the startup grind:</b> Photonic backend for <a href="https://github.com/apache/tvm">Apache TVM</a>, Verilog compiler, no-code Verilog editor</p>
+    </div>
+    <footer>
+        <a href="https://x.com/_sathvikr">Twitter</a> |
+        <a href="https://www.linkedin.com/in/sathvik-redrouthu-28456919b/">LinkedIn</a> |
+        <a href="https://github.com/sathvikr">GitHub</a> |
+        <a href="mailto:sathvik.redrouthu@gmail.com">Email</a>
+    </footer>
+</body>
 </html>

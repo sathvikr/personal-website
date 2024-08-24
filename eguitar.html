@@ -1,43 +1,87 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Sathvik Redrouthu's Homepage</title>
-        <style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sathvik Redrouthu's Homepage</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        nav {
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+        .center-content {
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px 0;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .image-grid img {
+            width: 100%;
+            height: auto;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
             .image-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
+                grid-template-columns: repeat(2, 1fr);
             }
-            .image-grid img {
-                width: 100%;
-                height: auto;
-            }
-        </style>
-    </head>
-    <body>
-        <nav style="text-align: center;"><p><a href="index.html">Home</a> 
-            | <a href="projects.html">Projects</a> 
-            | <a href="thoughts.html">Thoughts</a> 
-        </nav>
-        <div style="margin: 0 500px 0 500px;">
-            <div style="text-align: center;">
-                <h1>Electric guitar build in TJ's wood shop</h1>
-            </div>
-            <div class="image-grid">
-                <img src="media/builds/eguitar/body.jpeg" alt="Electric Guitar Build - Body">
-                <img src="media/builds/eguitar/neck.jpeg" alt="Electric Guitar Build - Neck">
-                <img src="media/builds/eguitar/just_painted.jpeg" alt="Electric Guitar Build - Fretboard">
-                <img src="media/builds/eguitar/disassembled.jpeg" alt="Electric Guitar Build - Headstock">
-                <img src="media/builds/eguitar/electronics.jpeg" alt="Electric Guitar Build - Electronics">
-                <img src="media/builds/eguitar/neck2.jpeg" alt="Electric Guitar Build - Finished Guitar">
-                <img src="media/builds/eguitar/blank_assembled.jpeg" alt="Electric Guitar Build - Finished Guitar">
-            </div>
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Home</a> |
+        <a href="projects.html">Projects</a> |
+        <a href="thoughts.html">Thoughts</a>
+    </nav>
+    <div class="container">
+        <div class="center-content">
+            <h1>Electric guitar build in TJ's wood shop</h1>
         </div>
-        <footer style="text-align: center; margin-top: 30px;">
-            <p><a href="https://x.com/_sathvikr">Twitter</a> 
-                | <a href="https://www.linkedin.com/in/sathvik-redrouthu-28456919b/">LinkedIn</a> 
-                | <a href="https://github.com/sathvikr">GitHub</a> 
-                | <a href="mailto:sathvik.redrouthu@gmail.com">Email</a></p>
-        </footer>
-    </body>
+        <div class="image-grid">
+            <img src="media/builds/eguitar/body.jpeg" alt="Electric Guitar Build - Body">
+            <img src="media/builds/eguitar/neck.jpeg" alt="Electric Guitar Build - Neck">
+            <img src="media/builds/eguitar/just_painted.jpeg" alt="Electric Guitar Build - Fretboard">
+            <img src="media/builds/eguitar/disassembled.jpeg" alt="Electric Guitar Build - Headstock">
+            <img src="media/builds/eguitar/electronics.jpeg" alt="Electric Guitar Build - Electronics">
+            <img src="media/builds/eguitar/neck2.jpeg" alt="Electric Guitar Build - Finished Guitar">
+            <img src="media/builds/eguitar/blank_assembled.jpeg" alt="Electric Guitar Build - Finished Guitar">
+        </div>
+    </div>
+    <footer>
+        <a href="https://x.com/_sathvikr">Twitter</a> |
+        <a href="https://www.linkedin.com/in/sathvik-redrouthu-28456919b/">LinkedIn</a> |
+        <a href="https://github.com/sathvikr">GitHub</a> |
+        <a href="mailto:sathvik.redrouthu@gmail.com">Email</a>
+    </footer>
+</body>
 </html>

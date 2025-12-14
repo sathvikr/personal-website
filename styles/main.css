@@ -14,14 +14,14 @@ body {
 /* Header area, centered with Gutenberg-like wide margins */
 #site-header,
 .site-header {
-  margin: 3em 10% 1em;
+  margin: 3em 25% 1em;
   padding: 0;
   text-align: left;
 }
 
 /* Main content uses simple side gutters */
 main {
-  margin: 0 10% 6em;
+  margin: 0 25% 6em;
   padding: 0;
 }
 
@@ -58,8 +58,21 @@ hr {
 
 /* Footer small and centered */
 footer {
-  margin: 3em 10% 2em;
+  margin: 3em 25% 2em;
   color: #000;
   text-align: center;
+}
+
+@media (max-width: 800px) {
+  #site-header,
+  .site-header {
+    margin: 2em 10% 1em;
+  }
+  main {
+    margin: 0 10% 4em;
+  }
+  footer {
+    margin: 2em 10% 2em;
+  }
 }
 

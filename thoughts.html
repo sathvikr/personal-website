@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sathvik Redrouthu's Homepage</title>
+    <title>Thoughts</title>
     <style>
         body {
             font-family: 'Times New Roman', Times, serif;
@@ -26,12 +26,17 @@
             text-decoration: none;
             color: #333;
         }
-        .center-content {
-            text-align: center;
+        h1 {
+            font-size: 1em;
+            margin: 0 0 12px 0;
         }
-        img {
-            max-width: 100%;
-            height: auto;
+        ul {
+            padding-left: 24px;
+            margin: 0;
+        }
+        li {
+            font-size: 1em;
+            margin: 6px 0;
         }
         footer {
             text-align: center;
@@ -42,8 +47,11 @@
             .container {
                 width: 95%;
             }
+            h1 { font-size: 1em; }
+            li { font-size: 1em; }
         }
     </style>
+    <meta name="description" content="Sathvik's thoughts and interests">
 </head>
 <body>
     <nav>
@@ -51,15 +59,10 @@
     <a href="thoughts.html">Thoughts</a>
     </nav>
     <div class="container">
-        <div class="center-content">
-            <img src="media/pg.jpg" alt="Teaching Paul Graham gang signs" width="400">
-            <p><i>With Paul Graham—author, <i>On Lisp (1993)</i>; founder, Y Combinator.</i></p>
-        </div>
-        <p>Hi, I'm Sathvik! I'm a pure math student at the <a href="https://caltech.edu">California Institute of Technology</a> and a part-time Research Scientist at <a href="https://trainloop.ai">TrainLoop</a>, where I work on solving ARC-AGI.
-            <br><br>Prior to college, I worked at <a href="https://etched.com">Etched</a>, founded an EDA lab called Instachip (YC W25), and founded a chip startup with 3 tapeouts on 20nm.
-            <br><br>My research goal is to understand human cognition and build it into machines.</p>
-
-        <p><b>Contact me:</b> sredrout@caltech.edu</p>
+        <h1>Welcome!</h1>
+        <ul>
+            <li><a href="blog/neural-networks-dsl.html">Neural networks as DSL primitives</a></li>
+        </ul>
     </div>
     <footer>
         <a href="https://x.com/_sathvikr">Twitter</a> |
@@ -69,3 +72,4 @@
     </footer>
 </body>
 </html>
+

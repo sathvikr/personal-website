@@ -3,128 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neural networks as DSL primitives</title>
-    <style>
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 70%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        nav {
-            text-align: center;
-            padding: 10px 0;
-        }
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #333;
-        }
-        h1 {
-            margin: 0 0 16px 0;
-        }
-        pre {
-            background: #f8f8f8;
-            padding: 12px 16px;
-            overflow-x: auto;
-            font-family: monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-        .keyword { color: #569cd6; }
-        .arg { color: #4ec9b0; }
-        ul {
-            margin: 16px 0;
-            padding-left: 24px;
-        }
-        ul ul {
-            margin: 4px 0;
-        }
-        li {
-            margin: 8px 0;
-        }
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 10px 0;
-        }
-        @media (max-width: 600px) {
-            .container {
-                width: 95%;
-            }
-        }
-        .arc-example {
-            background: #1a1a1a;
-            border-radius: 4px;
-            padding: 12px;
-            margin: 16px 0;
-        }
-        .arc-header {
-            display: flex;
-            justify-content: space-between;
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-        .arc-pair {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            justify-content: center;
-        }
-        .arc-arrow {
-            color: #666;
-            font-size: 20px;
-        }
-        .arc-grid {
-            display: inline-block;
-        }
-        .arc-row {
-            display: flex;
-        }
-        .arc-cell {
-            width: 14px;
-            height: 14px;
-            border: 1px solid #333;
-            box-sizing: border-box;
-        }
-    </style>
+    <title>Neural networks as DSL primitives – Sathvik Redrouthu</title>
+    <link rel="stylesheet" href="../styles/tarski.css">
 </head>
 <body>
-    <nav>
-    <a href="../index.html">Home</a>
-    <a href="../thoughts.html">Thoughts</a>
-    </nav>
-    <div class="container">
-        <h1>Neural networks as DSL primitives</h1>
+    <div id="wrapper">
+        <div id="header">
+            <h1 id="blog-title"><a href="../index.html">Sathvik Redrouthu</a></h1>
+            <div id="tagline">Interested in algebra, human intelligence, and AI.</div>
+            <nav id="navigation">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../about.html">About</a></li>
+                </ul>
+            </nav>
+        </div>
 
-        Consider solving puzzle <a href="https://arcprize.org/play?task=3e980e27">3e980e27</a> (in ARC-1) while only being exposed to the first example in test-time. 
+        <div id="primary">
+            <div class="post">
+                <h2 class="post-title">Neural networks as DSL primitives</h2>
+                <div class="post-meta">December 2025</div>
+                <div class="post-content">
+
+        <p>Consider solving puzzle <a href="https://arcprize.org/play?task=3e980e27">3e980e27</a> (in ARC-1) while only being exposed to the first example in test-time.</p>
+
         <div id="arc-ex-0" class="arc-example"></div>
 
-        Our brains seem to implicitly synthesize something similar to the following program:
+        <p>Our brains seem to implicitly synthesize something similar to the following program:</p>
+
 <pre><span class="keyword">def</span> p(g: Grid) -> Grid:
     x = copy(grid=g, <span class="arg">obj</span>=obj, loc=red_square_in_obj)
     x = hflip(<span class="arg">obj</span>=x)
     <span class="keyword">return</span> paste(grid=g, <span class="arg">obj</span>=x, loc=red_square_not_in_obj)</pre>
 
-        We copy the grid at the red square inside the object, flip it, and paste it at the red square outside the object.
-        
-        What's interesting is that we don't have pre-coded definitions of <code>red_square_in_obj</code> or <code>red_square_not_in_obj</code>, but are still able to manipulate them in accordance to the above program.
-        
-        <br><br>
-        Consider the next example.
+        <p>We copy the grid at the red square inside the object, flip it, and paste it at the red square outside the object.</p>
+
+        <p>What's interesting is that we don't have pre-coded definitions of <code>red_square_in_obj</code> or <code>red_square_not_in_obj</code>, but are still able to manipulate them in accordance to the above program.</p>
+
+        <p>Consider the next example.</p>
+
         <div id="arc-ex-1" class="arc-example"></div>
 
-        Our brain immediately makes a generalization: the red squares in Example 1 were an instantiation of the more abstract <code>square</code> entity; in Example 2 we see another instantiation, which happens to be green. Also, there are <i>n</i> squares, and <i>n</i> happened to be 2 in Example 1.         So instead of <code>red_square_in_obj</code> and <code>red_square_not_in_obj</code>, our brain generalizes to an <i>n</i>-dimensional <code>squares</code> structure.
-        
-        <br><br>
-        Also, for some reason, we don't flip the object before pasting. I'm not sure why, so I'll leave that as <code>condition()</code>:
+        <p>Our brain immediately makes a generalization: the red squares in Example 1 were an instantiation of the more abstract <code>square</code> entity; in Example 2 we see another instantiation, which happens to be green. Also, there are <em>n</em> squares, and <em>n</em> happened to be 2 in Example 1. So instead of <code>red_square_in_obj</code> and <code>red_square_not_in_obj</code>, our brain generalizes to an <em>n</em>-dimensional <code>squares</code> structure.</p>
+
+        <p>Also, for some reason, we don't flip the object before pasting. I'm not sure why, so I'll leave that as <code>condition()</code>:</p>
+
 <pre><span class="keyword">def</span> p(g: Grid) -> Grid:
     x = copy(g=grid, <span class="arg">obj</span>=obj, loc=squares["green"][0])
     <span class="keyword">if</span> condition(): x = hflip(<span class="arg">obj</span>=x)
@@ -134,12 +57,13 @@
 <span class="keyword">def</span> condition() -> bool:
     <span class="keyword">return</span> FF()</pre>
 
-        We see that <code>condition()</code> is a forward pass on small neural network. Because we don't know the rule, we can leave it a "black-box"; i.e., <i>"for reason X, we don't call <code>flip()</code>—I have some vague intuition when we would call <code>flip()</code> from seeing examples, but I don't know what reason X is."</i>
+        <p>We see that <code>condition()</code> is a forward pass on small neural network. Because we don't know the rule, we can leave it a "black-box"; i.e., <em>"for reason X, we don't call <code>flip()</code>&mdash;I have some vague intuition when we would call <code>flip()</code> from seeing examples, but I don't know what reason X is."</em></p>
+
         <ul>
-            <li>More Task <i>n</i> examples will:
+            <li>More Task <em>n</em> examples will:
                 <ul>
-                    <li>Serve as training examples. After enough examples, humans are able to attend on the right object-pattern features, training the FF network for <i>condition()</i> without knowing the actual rule</li>
-                    <li>Serve as constraints in program search, pruning the search space and enabling finding a rule for <i>condition()</i> that is satisfiable for all Task <i>n-1</i> examples we saw thus far</li>
+                    <li>Serve as training examples. After enough examples, humans are able to attend on the right object-pattern features, training the FF network for <em>condition()</em> without knowing the actual rule</li>
+                    <li>Serve as constraints in program search, pruning the search space and enabling finding a rule for <em>condition()</em> that is satisfiable for all Task <em>n-1</em> examples we saw thus far</li>
                 </ul>
             </li>
             <li>Once the rule is found
@@ -151,10 +75,11 @@
             </li>
         </ul>
 
-        Let's continue to the remaining 2 examples.
+        <p>Let's continue to the remaining 2 examples.</p>
+
         <div id="arc-ex-2" class="arc-example"></div>
 
-        The program is pretty much the same; I've replaced <code>condition()</code> with <code>[ ? ]</code> to make it more concise.
+        <p>The program is pretty much the same; I've replaced <code>condition()</code> with <code>[ ? ]</code> to make it more concise.</p>
 
 <pre><span class="keyword">def</span> p(g: Grid) -> Grid:
     <span class="keyword">for</span> color <span class="keyword">in</span> {"green", "red"}:
@@ -163,16 +88,13 @@
         <span class="keyword">for</span> sq <span class="keyword">in</span> squares[color][1:]:
             g = paste(grid=g, <span class="arg">obj</span>=x, loc=sq)</pre>
 
-        **Note that if we had enough data, we could certainly start to solve these puzzles by training the <code>condition()</code> model without knowing what the actual condition is!
+        <p><strong>Note that if we had enough data, we could certainly start to solve these puzzles by training the <code>condition()</code> model without knowing what the actual condition is!</strong></p>
 
-        <br><br>
+        <p>Here's the final example:</p>
 
-        Here's the final example:
         <div id="arc-ex-3" class="arc-example"></div>
 
-        It was here where it finally clicked that <code>condition()</code> is actually <code>color == "red"</code>; in other words, only when the square is red we flip. We can "step into" the <code>condition()</code> model, replacing it with the symbolic rule that is maintained across all 4 examples.
-
-        
+        <p>It was here where it finally clicked that <code>condition()</code> is actually <code>color == "red"</code>; in other words, only when the square is red we flip. We can "step into" the <code>condition()</code> model, replacing it with the symbolic rule that is maintained across all 4 examples.</p>
 
 <pre><span class="keyword">def</span> p(g: Grid) -> Grid:
     <span class="keyword">for</span> color <span class="keyword">in</span> {"green", "red"}:
@@ -181,68 +103,19 @@
         <span class="keyword">for</span> sq <span class="keyword">in</span> squares[color][1:]:
             g = paste(grid=g, <span class="arg">obj</span>=x, loc=sq)</pre>
 
+                </div>
+            </div>
+        </div>
+
+        <div id="secondary"></div>
+
+        <div id="footer">
+            &copy; <span id="year"></span> Sathvik Redrouthu
+        </div>
     </div>
-    <footer>
-        <a href="https://x.com/_sathvikr">Twitter</a> |
-        <a href="https://www.linkedin.com/in/sathvik-redrouthu-28456919b/">LinkedIn</a> |
-        <a href="https://github.com/sathvikr">GitHub</a> |
-        <a href="mailto:sredrout@caltech.edu">Email</a>
-    </footer>
-    <script>
-        const ARC_COLORS = [
-            '#000000', '#0074D9', '#FF4136', '#2ECC40', '#FFDC00',
-            '#AAAAAA', '#F012BE', '#FF851B', '#7FDBFF', '#870C25'
-        ];
 
-        function renderGrid(grid) {
-            const container = document.createElement('div');
-            container.className = 'arc-grid';
-            grid.forEach(row => {
-                const rowEl = document.createElement('div');
-                rowEl.className = 'arc-row';
-                row.forEach(cell => {
-                    const cellEl = document.createElement('div');
-                    cellEl.className = 'arc-cell';
-                    cellEl.style.backgroundColor = ARC_COLORS[cell] || ARC_COLORS[0];
-                    rowEl.appendChild(cellEl);
-                });
-                container.appendChild(rowEl);
-            });
-            return container;
-        }
-
-        function renderExample(containerId, input, output, exNum) {
-            const container = document.getElementById(containerId);
-            const rows = input.length;
-            const cols = input[0].length;
-
-            const header = document.createElement('div');
-            header.className = 'arc-header';
-            header.innerHTML = `<span>Ex.${exNum} Input</span><span>(${cols}x${rows})</span><span>Ex.${exNum} Output</span><span>(${cols}x${rows})</span>`;
-            container.appendChild(header);
-
-            const pair = document.createElement('div');
-            pair.className = 'arc-pair';
-            pair.appendChild(renderGrid(input));
-            const arrow = document.createElement('span');
-            arrow.className = 'arc-arrow';
-            arrow.textContent = '→';
-            pair.appendChild(arrow);
-            pair.appendChild(renderGrid(output));
-            container.appendChild(pair);
-        }
-
-        fetch('https://raw.githubusercontent.com/fchollet/ARC-AGI/master/data/training/3e980e27.json')
-            .then(r => r.json())
-            .then(data => {
-                const examples = [0, 1, 2, 3];
-                examples.forEach((idx, i) => {
-                    if (data.train[idx]) {
-                        renderExample(`arc-ex-${i}`, data.train[idx].input, data.train[idx].output, idx + 1);
-                    }
-                });
-            })
-            .catch(err => console.error('Failed to load ARC task:', err));
-    </script>
+    <script src="../scripts/posts.js"></script>
+    <script src="../scripts/arc-viz.js"></script>
+    <script src="../scripts/main.js"></script>
 </body>
 </html>

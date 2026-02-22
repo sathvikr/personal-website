@@ -3,69 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sathvik Redrouthu's Homepage</title>
-    <style>
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 70%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        nav {
-            text-align: center;
-            padding: 10px 0;
-        }
-        nav a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #333;
-        }
-        .center-content {
-            text-align: center;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            padding: 10px 0;
-        }
-        @media (max-width: 600px) {
-            .container {
-                width: 95%;
-            }
-        }
-    </style>
+    <title>Sathvik Redrouthu</title>
+    <link rel="stylesheet" href="styles/tarski.css">
 </head>
 <body>
-    <nav>
-    <a href="index.html">Home</a>
-    <a href="thoughts.html">Thoughts</a>
-    </nav>
-    <div class="container">
-        <div class="center-content">
-            <img src="media/pg.jpg" alt="Teaching Paul Graham gang signs" width="400">
-            <p><i>With Paul Graham—author, <i>On Lisp (1993)</i>; founder, Y Combinator.</i></p>
+    <div id="wrapper">
+        <div id="header">
+            <h1 id="blog-title"><a href="index.html">Sathvik Redrouthu</a></h1>
+            <div id="tagline">Interested in algebra, human intelligence, and AI.</div>
+            <nav id="navigation">
+                <ul>
+                    <li class="current"><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                </ul>
+            </nav>
         </div>
-        <p>Hi, I'm Sathvik! I'm a pure math student at the <a href="https://caltech.edu">California Institute of Technology</a> and a part-time Research Scientist at <a href="https://trainloop.ai">TrainLoop</a>, where I work on solving ARC-AGI.
-            <br><br>Prior to college, I worked at <a href="https://etched.com">Etched</a>, founded an EDA lab called Instachip (YC W25), and founded a chip startup with 3 tapeouts on 20nm.
-            <br><br>My research goal is to understand human cognition and build it into machines.</p>
 
-        <p><b>Contact me:</b> sredrout@caltech.edu</p>
+        <div id="primary">
+            <div id="posts-listing"></div>
+        </div>
+
+        <div id="secondary"></div>
+
+        <div id="footer">
+            &copy; <span id="year"></span> Sathvik Redrouthu
+        </div>
     </div>
-    <footer>
-        <a href="https://x.com/_sathvikr">Twitter</a> |
-        <a href="https://www.linkedin.com/in/sathvik-redrouthu-28456919b/">LinkedIn</a> |
-        <a href="https://github.com/sathvikr">GitHub</a> |
-        <a href="mailto:sredrout@caltech.edu">Email</a>
-    </footer>
+    <script src="scripts/posts.js"></script>
+    <script src="scripts/arc-viz.js"></script>
+    <script src="scripts/main.js"></script>
 </body>
 </html>

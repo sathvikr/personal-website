@@ -3,7 +3,7 @@ var prefix = document.querySelector('link[rel="stylesheet"]').getAttribute('href
 
 function postMetaHTML(post) {
     var html = post.date;
-    if (post.paper) html += ' | <a href="' + post.paper + '">paper</a>';
+    if (post.link) html += ' | <a href="' + post.link + '">' + (post.linkLabel || 'link') + '</a>';
     return html;
 }
 

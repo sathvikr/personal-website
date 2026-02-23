@@ -1,6 +1,12 @@
 // Detect path prefix (blog pages use "../", root pages use "")
 var prefix = document.querySelector('link[rel="stylesheet"]').getAttribute('href').replace('styles/tarski.css', '');
 
+function postMetaHTML(post) {
+    var html = post.date;
+    if (post.link) html += ' | <a href="' + post.link + '">' + (post.linkLabel || 'link') + '</a>';
+    return html;
+}
+
 // Build sidebar
 (function buildSidebar() {
     var sidebar = document.getElementById('secondary');
@@ -30,7 +36,18 @@ var prefix = document.querySelector('link[rel="stylesheet"]').getAttribute('href
     var container = document.getElementById('posts-listing');
     if (!container) return;
 
-    POSTS.forEach(function(post) {
+    // Pre-create placeholders in order so posts always appear in POSTS order
+    var slots = POSTS.map(function(post) {
+        var article = document.createElement('div');
+        article.className = 'post';
+        article.innerHTML =
+            '<h2 class="post-title"><a href="blog/' + post.file + '.html">' + post.title + '</a></h2>' +
+            '<div class="post-meta">' + postMetaHTML(post) + '</div>';
+        container.appendChild(article);
+        return article;
+    });
+
+    POSTS.forEach(function(post, i) {
         var url = 'blog/' + post.file + '.html';
 
         fetch(url)
@@ -40,29 +57,33 @@ var prefix = document.querySelector('link[rel="stylesheet"]').getAttribute('href
                 var content = doc.querySelector('.post-content');
                 if (!content) return;
 
-                var article = document.createElement('div');
-                article.className = 'post';
-                article.innerHTML =
-                    '<h2 class="post-title"><a href="' + url + '">' + post.title + '</a></h2>' +
-                    '<div class="post-meta">' + post.date + '</div>' +
-                    '<div class="post-content">' + content.innerHTML + '</div>';
-                container.appendChild(article);
+                var contentDiv = document.createElement('div');
+                contentDiv.className = 'post-content';
+                contentDiv.innerHTML = content.innerHTML;
+                slots[i].appendChild(contentDiv);
 
                 // Run any post-specific init (e.g., ARC visualizations)
-                if (article.querySelector('.arc-example') && typeof initArcViz === 'function') {
+                if (contentDiv.querySelector('.arc-example') && typeof initArcViz === 'function') {
                     initArcViz();
                 }
             })
-            .catch(function(err) {
-                // Fallback: show as a link
-                var article = document.createElement('div');
-                article.className = 'post';
-                article.innerHTML =
-                    '<h2 class="post-title"><a href="' + url + '">' + post.title + '</a></h2>' +
-                    '<div class="post-meta">' + post.date + '</div>';
-                container.appendChild(article);
-            });
+            .catch(function() {});
     });
+})();
+
+// Populate post title and date on blog pages from POSTS
+(function setPostMeta() {
+    var path = window.location.pathname;
+    for (var i = 0; i < POSTS.length; i++) {
+        if (path.indexOf(POSTS[i].file) !== -1) {
+            var title = document.querySelector('.post-title');
+            if (title && !title.textContent.trim()) title.textContent = POSTS[i].title;
+            var meta = document.querySelector('.post-meta');
+            if (meta && !meta.textContent.trim()) meta.innerHTML = postMetaHTML(POSTS[i]);
+            document.title = POSTS[i].title + ' \u2013 Sathvik Redrouthu';
+            break;
+        }
+    }
 })();
 
 // Copyright year

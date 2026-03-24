@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sathvik Redrouthu</title>
+    <link rel="stylesheet" href="../styles/tarski.css">
+    <style>
+        .arc-figure {
+            margin: 1.5em 0;
+            text-align: center;
+        }
+        .arc-figure img {
+            max-width: 100%;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+        .arc-figure figcaption {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 0.4em;
+            font-style: italic;
+        }
+        .arc-compare {
+            display: flex;
+            gap: 1em;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1.5em 0;
+        }
+        .arc-compare figure {
+            margin: 0;
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+        }
+        .arc-compare img {
+            max-width: 100%;
+            border: 1px solid #333;
+            border-radius: 4px;
+        }
+        .arc-compare figcaption {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 0.4em;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="header">
+            <h1 id="blog-title"><a href="../index.html">Sathvik Redrouthu</a></h1>
+            <div id="tagline">Interested in algebra, human intelligence, and AI.</div>
+            <nav id="navigation">
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../about.html">About</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div id="primary">
+            <div class="post">
+                <h2 class="post-title"></h2>
+                <div class="post-meta"></div>
+                <div class="post-content">
+
+    <p>At TrainLoop, we&rsquo;ve been building an agent to play <a href="https://three.arcprize.org">ARC-3</a> puzzles&mdash;procedurally generated games that require real-time discovery of hidden mechanics. The agent uses GPT-5.2 as its backbone and plays by observing pixel grids, forming theories about how the game works, and issuing action sequences. Over five ablations on a single puzzle (ls20), I iterated on how the agent manages its hypotheses and world model.</p>
+
+    <h3>Setup</h3>
+
+    <p>The agent architecture is a loop: observe the game state, analyze it (with Python for grid diffs, flood fills, etc.), form a plan, execute actions, repeat. The puzzle ls20 has at least two levels. Level 1 involves stamp movement, erosion timers, cash-in mechanics, and gate toggling. Level 2 adds tighter time pressure. The agent gets 500 actions total and has to figure everything out from scratch.</p>
+
+    <figure class="arc-figure">
+        <img src="../images/arc3/ls20_initial.png" alt="ls20 initial game state" width="512">
+        <figcaption>ls20 initial state. The agent sees a 64&times;64 pixel grid with walls (dark gray), a player marker (white cross), target tokens (white diamonds), gates (red), blue tiles, an orange erosion region, and maroon anchors.</figcaption>
+    </figure>
+
+    <h3>Ablation 0: Baseline</h3>
+
+    <p>No explicit belief management. The agent just analyzes and acts.</p>
+
+    <p><strong>Result:</strong> 506 actions, score 0, never left Level 1. Four game overs.</p>
+
+    <p>The failure mode was hypothesis lock-in. The agent committed early to one theory about platform movement and erosion timing, then never explored alternatives. It never discovered the shape-matching mechanic central to ls20. This is the default behavior of a long-context model doing sequential reasoning: once a narrative forms in the context window, inertia keeps it there.</p>
+
+    <h3>Ablation 1: Explicit hypothesis management</h3>
+
+    <p>I added a structured hypothesis registry. Every analyzer response now includes a <code>[HYPOTHESES]</code> section listing each hypothesis with an ID, confidence score, status, evidence for and against, and a test plan. A <code>HypothesisTracker</code> monitors how long the agent stays on one hypothesis without progress and injects a <code>[HYPOTHESIS DIVERSIFICATION REQUIRED]</code> prompt after 30 stale actions.</p>
+
+    <p><strong>Result:</strong> 500 actions, score 1. Level 1 completed on the second attempt in 114 actions. Level 2 timed out after 244 actions. One game over.</p>
+
+    <p>This was the first time the agent solved Level 1. It generated 25+ unique hypotheses (vs. 1&ndash;2 in baseline) and the diversification trigger fired four times. The agent explored platform movement, click interactions, gate toggles, shape matching, erosion mechanics, cash-in cycles, and n-block clearing before converging on the correct solution path: stamp controls for 5-cell movement, G erosion timer at 2 columns per action, cash-in when G=0, and a $/8 switch toggling remote gates.</p>
+
+    <p>Level 2 failed because the agent spent 244 actions re-discovering mechanics and looping between two hypotheses (H3 and H9) without making progress.</p>
+
+    <figure class="arc-figure">
+        <img src="../images/arc3/ablation1_l1_solve.gif" alt="Ablation 1: agent solving Level 1">
+        <figcaption>Ablation 1: the agent explores hypotheses and solves Level 1 in 114 actions (second attempt). Note the player moving through the maze, toggling gates, and clearing the erosion region.</figcaption>
+    </figure>
+
+    <h3>Ablation 2: Shape analysis hints + cross-level transfer</h3>
+
+    <p>To help with Level 2, I added domain-specific guidance: a shape analysis section with a Python flood-fill example, a cross-level transfer protocol, and a lower diversification threshold (20 actions instead of 30).</p>
+
+    <p><strong>Result:</strong> 500 actions, score 0. Never completed Level 1. Three game overs. <em>Regression.</em></p>
+
+    <p>This was worse than both the baseline and Ablation 1. The added prompt complexity caused hypothesis thrashing: 50+ hypothesis switches in 500 actions, constant bouncing between H2, H4, and H5. Game overs came at remarkably consistent intervals&mdash;actions 139, 134, and 138&mdash;suggesting the agent was reliably failing in the same way each time. It never committed to any hypothesis long enough to actually test it.</p>
+
+    <p>This confirmed something I&rsquo;d read in the ARC Prize blog: diminishing and even negative returns from additional hand-engineering. The model performs best with minimal, structural guidance&mdash;not domain-specific hints. <strong>Prompt complexity is inversely correlated with performance.</strong></p>
+
+    <figure class="arc-figure">
+        <img src="../images/arc3/ablation2_thrashing.gif" alt="Ablation 2: hypothesis thrashing">
+        <figcaption>Ablation 2: hypothesis thrashing in action. The agent cycles through game overs at regular intervals (~135 actions each), never committing to a strategy long enough to make progress. Compare the erratic movement to Ablation 1 above.</figcaption>
+    </figure>
+
+    <h3>Ablation 3: Minimum commitment (killed early)</h3>
+
+    <p>I reverted the prompt to the clean Ablation 1 version and added a minimum commitment constraint: block hypothesis switches if the current hypothesis has been active for fewer than 10 actions.</p>
+
+    <p><strong>Result:</strong> Killed at 154 actions, score 0, still on Level 1. The constraint fired once (blocked a switch at 9 actions, allowed at 12). One diversification trigger.</p>
+
+    <p>It reduced thrashing but wasn&rsquo;t enough on its own. I killed it early to try something more fundamental.</p>
+
+    <h3>Ablation 4: Knowledge model</h3>
+
+    <p>Complete redesign. Instead of tracking hypotheses, the system now tracks <em>knowledge</em>:</p>
+
+    <ul>
+        <li><strong>KNOWN:</strong> confirmed mechanics with evidence</li>
+        <li><strong>UNKNOWN:</strong> open questions to investigate</li>
+        <li><strong>EXPLORING:</strong> which unknown is currently being targeted</li>
+        <li><strong>OBJECTIVE_THEORY:</strong> current best theory for how to score</li>
+    </ul>
+
+    <p>The key principle: actions always target the most promising unknown. When many things are unknown (early game), exploration is naturally broad. As knowledge grows, the agent narrows focus to remaining unknowns. A <code>KnowledgeTracker</code> maintains a high-water mark&mdash;knowledge can only grow&mdash;and fires a <code>[STALE EXPLORATION]</code> nudge when no new knowledge is gained for 30 actions. Knowledge carries across game overs.</p>
+
+    <p><strong>Result:</strong> 500 actions, score 1. Level 1 completed on the <em>first attempt</em> in 49 actions. Level 2 timed out after 451 actions with six game overs.</p>
+
+    <p>49 actions to solve Level 1 vs. 114 in Ablation 1 and infinity in the baseline. The human baseline for Level 1 is 21 actions, so the agent is within 2.3x of human efficiency. Knowledge grew steadily from 0 to 4 to 7 known items, and only one stale nudge was needed (vs. four diversification triggers in Ablation 1).</p>
+
+    <div class="arc-compare">
+        <figure>
+            <img src="../images/arc3/ablation1_first50.gif" alt="Ablation 1: first 50 actions">
+            <figcaption>Ablation 1: first 50 actions. Still exploring; Level 1 unsolved.</figcaption>
+        </figure>
+        <figure>
+            <img src="../images/arc3/ablation4_first50.gif" alt="Ablation 4: first 50 actions">
+            <figcaption>Ablation 4: first 50 actions. Level 1 solved by action 49.</figcaption>
+        </figure>
+    </div>
+
+    <p>Level 2 remained unsolved but revealed a different bottleneck. Game overs came at strikingly regular intervals: 66, 68, 71, 71, 70, 68 actions. This ~70-action cadence suggests a fixed timer per attempt. The agent knows what to do&mdash;it has the mechanics mapped&mdash;but can&rsquo;t execute fast enough. Each analyzer cycle consumes 5&ndash;10 actions of overhead, and with only ~70 actions per attempt, that leaves just 7&ndash;14 actual decision points.</p>
+
+    <figure class="arc-figure">
+        <img src="../images/arc3/ablation4_l2_struggle.gif" alt="Ablation 4: Level 2 game over cycle">
+        <figcaption>Ablation 4 on Level 2: the agent understands the mechanics but dies to the timer every ~70 actions. Six game overs, each attempt looking nearly identical&mdash;the bottleneck is execution speed, not reasoning.</figcaption>
+    </figure>
+
+    <h3>Summary</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Ablation</th>
+                <th>Approach</th>
+                <th>Score</th>
+                <th>L1 actions</th>
+                <th>Game overs</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>0</td>
+                <td>Baseline (no belief mgmt)</td>
+                <td>0</td>
+                <td>&mdash;</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Hypothesis registry</td>
+                <td>1</td>
+                <td>114 (2nd try)</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>+ shape hints</td>
+                <td>0</td>
+                <td>&mdash;</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Min commitment</td>
+                <td>0</td>
+                <td>&mdash;</td>
+                <td>&mdash;</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Knowledge model</td>
+                <td>1</td>
+                <td>49 (1st try)</td>
+                <td>6</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>What I learned</h3>
+
+    <p><strong>Explicit belief management matters a lot.</strong> The jump from Ablation 0 to 1 is the biggest single improvement. Without it, the model locks into its first plausible narrative and never leaves. A structured registry that forces enumeration of alternatives breaks this default.</p>
+
+    <p><strong>Knowledge > hypotheses.</strong> Framing the agent&rsquo;s state as &ldquo;what do I know and what don&rsquo;t I know&rdquo; outperforms &ldquo;what do I believe and how confident am I.&rdquo; Hypotheses invite premature commitment to explanations. Knowledge items are monotonic&mdash;once confirmed, they stay confirmed&mdash;and unknowns give the agent a natural exploration target. This framing reduced Level 1 solve time by 57%.</p>
+
+    <p><strong>More prompt engineering makes things worse.</strong> Ablation 2 is the cautionary tale. Adding domain hints, worked examples, and transfer protocols degraded performance below baseline. The model has enough capability to discover mechanics on its own; overloading the prompt just causes thrashing. Structural scaffolding (how to organize thinking) helps. Content scaffolding (what to think about) hurts.</p>
+
+    <p><strong>The next bottleneck is execution speed, not reasoning.</strong> On Level 2, the agent dies to a timer, not to confusion. It knows the mechanics but can&rsquo;t act on them fast enough within the ~70-action window. The fix is probably longer action plans&mdash;letting the agent commit to 20-step sequences instead of 10 when confidence is high&mdash;rather than any change to the reasoning layer.</p>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="secondary"></div>
+
+        <div id="footer">
+            &copy; <span id="year"></span> Sathvik Redrouthu
+        </div>
+    </div>
+
+    <script src="../scripts/posts.js"></script>
+    <script src="../scripts/main.js"></script>
+</body>
+</html>

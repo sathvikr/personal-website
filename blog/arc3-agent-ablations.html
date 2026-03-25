@@ -45,6 +45,48 @@
             margin-top: 0.4em;
             font-style: italic;
         }
+        .abstract {
+            border-left: 3px solid #666;
+            padding: 0.8em 1.2em;
+            margin: 1.5em 0;
+            font-style: italic;
+            color: #ccc;
+        }
+        .abstract strong {
+            font-style: normal;
+        }
+        .hypothesis-list {
+            margin: 1em 0 1em 1.5em;
+        }
+        .hypothesis-list li {
+            margin-bottom: 0.5em;
+        }
+        .table-caption {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 0.5em;
+            font-style: italic;
+        }
+        .result-tag {
+            display: inline-block;
+            font-size: 0.8em;
+            padding: 0.1em 0.5em;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-left: 0.3em;
+        }
+        .result-tag.regression {
+            color: #e55;
+            border: 1px solid #e55;
+        }
+        .result-tag.improvement {
+            color: #5b5;
+            border: 1px solid #5b5;
+        }
+        .result-tag.best {
+            color: #5bf;
+            border: 1px solid #5bf;
+        }
     </style>
 </head>
 <body>
@@ -66,66 +108,244 @@
                 <div class="post-meta"></div>
                 <div class="post-content">
 
-    <p>At TrainLoop, we&rsquo;ve been building an agent to play <a href="https://three.arcprize.org">ARC-3</a> puzzles&mdash;procedurally generated games that require real-time discovery of hidden mechanics. The agent uses GPT-5.2 as its backbone and plays by observing pixel grids, forming theories about how the game works, and issuing action sequences. Over five ablations on a single puzzle (ls20), I iterated on how the agent manages its hypotheses and world model.</p>
+    <div class="abstract">
+        <strong>Abstract.</strong> We present a series of six ablation experiments on an LLM-based agent playing ARC-3, a procedurally generated game requiring real-time discovery of hidden mechanics. We test four hypotheses about belief management, knowledge representation, prompt complexity, and plan length. Our findings show that structured knowledge tracking (KNOWN/UNKNOWN) reduces Level 1 solve time by 57% over hypothesis-confidence tracking, that domain-specific prompt content reliably degrades performance, and that the adaptation interval between planning cycles is a critical and under-appreciated parameter.
+    </div>
 
-    <h3>Setup</h3>
+    <h3>1. Introduction</h3>
 
-    <p>The agent architecture is a loop: observe the game state, analyze it (with Python for grid diffs, flood fills, etc.), form a plan, execute actions, repeat. The puzzle ls20 has at least two levels. Level 1 involves stamp movement, erosion timers, cash-in mechanics, and gate toggling. Level 2 adds tighter time pressure. The agent gets 500 actions total and has to figure everything out from scratch.</p>
+    <p>LLM agents deployed in open-ended environments face a fundamental challenge: they must discover the rules of the world from scratch, without access to documentation or prior examples. In procedurally generated games, every instance presents novel mechanics, making memorization impossible and online learning essential.</p>
+
+    <p>The default behavior of long-context language models in sequential reasoning tasks is <em>narrative lock-in</em>: once a plausible explanation forms in the context window, inertial forces keep it there. The model commits to its first hypothesis and never explores alternatives. This is catastrophic in environments where the correct strategy can only be discovered through systematic experimentation.</p>
+
+    <p>We investigate what kinds of scaffolding structures help an LLM agent overcome this default. Our testbed is a single ARC-3 puzzle (ls20), which we hold fixed across all experiments to isolate the effect of architectural changes from task variance. Over six ablations, we test the following hypotheses:</p>
+
+    <h4>1.1 Hypotheses</h4>
+
+    <ul class="hypothesis-list">
+        <li><strong>H1: Explicit belief management prevents hypothesis lock-in and improves exploration.</strong> Tested by Ablation 1 (hypothesis registry with diversification triggers) against Ablation 0 (no belief management).</li>
+        <li><strong>H2: Structured knowledge tracking (KNOWN/UNKNOWN) outperforms hypothesis-confidence tracking.</strong> Tested by Ablation 4 (knowledge model) against Ablation 1 (hypothesis registry).</li>
+        <li><strong>H3: Domain-specific prompt content (hints, examples) improves performance.</strong> Tested by Ablation 2 (shape hints, worked examples, transfer protocols) against Ablation 1. Also tested by Ablation 5 (efficiency rules, game-over memory) against Ablation 4.</li>
+        <li><strong>H4: Longer action plans improve execution efficiency under time pressure.</strong> Tested by Ablation 5 (plans of 8&ndash;10 steps when mechanics are known, increased adaptation interval) against Ablation 4 (default 3&ndash;5 step plans, interval=10).</li>
+    </ul>
+
+    <h3>2. Experimental Setup</h3>
+
+    <p>The agent architecture is a loop: observe the game state (a 64&times;64 pixel grid), analyze it using Python (grid diffs, flood fills, object detection), form a plan, execute actions, and repeat. The backbone model is GPT-5.2. An adaptation cycle runs every <em>N</em> actions (the <code>--interval</code> parameter, default 10), during which the model re-examines the game state and updates its plan.</p>
+
+    <p>The puzzle ls20 has at least two levels. Level 1 involves stamp movement, erosion timers, cash-in mechanics, and gate toggling. Level 2 adds tighter time pressure with an approximately 70-action window per attempt. The agent receives 500 total actions and must figure out all mechanics from scratch.</p>
+
+    <h4>2.1 System Parameters</h4>
+
+    <p>The agent&rsquo;s behavior is governed by a small set of tunable parameters, summarized below. These are the independent variables across our ablations; all other aspects of the agent (model, puzzle, observation pipeline) are held constant.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Parameter</th>
+                <th>Description</th>
+                <th>Default</th>
+                <th>Ablations Varied</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>interval</code></td>
+                <td>Actions between adaptation cycles. Each cycle re-observes the game state, runs analysis, and replans.</td>
+                <td>10</td>
+                <td>5 (increased to 15)</td>
+            </tr>
+            <tr>
+                <td><code>plan_size</code></td>
+                <td>Number of actions emitted per plan. Controls the granularity of the agent&rsquo;s commitments.</td>
+                <td>3&ndash;5</td>
+                <td>5 (increased to 8&ndash;10 when mechanics known)</td>
+            </tr>
+            <tr>
+                <td><code>belief_repr</code></td>
+                <td>Representation of the agent&rsquo;s world model: <em>none</em>, <em>hypothesis registry</em>, or <em>knowledge model</em> (KNOWN/UNKNOWN).</td>
+                <td>none</td>
+                <td>0 (none), 1&ndash;3 (hypotheses), 4&ndash;5 (knowledge)</td>
+            </tr>
+            <tr>
+                <td><code>staleness_threshold</code></td>
+                <td>Actions without progress before a diversification or stale-exploration nudge fires.</td>
+                <td>30</td>
+                <td>2 (reduced to 20 for L2+)</td>
+            </tr>
+            <tr>
+                <td><code>min_commitment</code></td>
+                <td>Minimum actions on a hypothesis before switching is allowed. Prevents thrashing.</td>
+                <td>0 (off)</td>
+                <td>3 (set to 10)</td>
+            </tr>
+        </tbody>
+    </table>
 
     <figure class="arc-figure">
         <img src="../images/arc3/ls20_initial.png" alt="ls20 initial game state" width="512">
-        <figcaption>ls20 initial state. The agent sees a 64&times;64 pixel grid with walls (dark gray), a player marker (white cross), target tokens (white diamonds), gates (red), blue tiles, an orange erosion region, and maroon anchors.</figcaption>
+        <figcaption>Figure 1. ls20 initial state. The agent sees a 64&times;64 pixel grid with walls (dark gray), a player marker (white cross), target tokens (white diamonds), gates (red), blue tiles, an orange erosion region, and maroon anchors.</figcaption>
     </figure>
 
-    <h3>Ablation 0: Baseline</h3>
+    <h3>3. Experiments</h3>
 
-    <p>No explicit belief management. The agent just analyzes and acts.</p>
+    <h4>3.1 Ablation 0: Baseline (no belief management)</h4>
+
+    <p>No explicit belief management. The agent analyzes the game state and acts based on whatever reasoning emerges naturally in the context window.</p>
 
     <p><strong>Result:</strong> 506 actions, score 0, never left Level 1. Four game overs.</p>
 
-    <p>The failure mode was hypothesis lock-in. The agent committed early to one theory about platform movement and erosion timing, then never explored alternatives. It never discovered the shape-matching mechanic central to ls20. This is the default behavior of a long-context model doing sequential reasoning: once a narrative forms in the context window, inertia keeps it there.</p>
+    <p>The failure mode was hypothesis lock-in, exactly as predicted. The agent committed early to one theory about platform movement and erosion timing, then never explored alternatives. It never discovered the shape-matching mechanic central to ls20. This establishes the baseline against which all subsequent interventions are measured: without structural scaffolding, the model&rsquo;s default sequential reasoning produces narrative lock-in and exploration failure.</p>
 
-    <h3>Ablation 1: Explicit hypothesis management</h3>
+    <figure class="arc-figure">
+      <svg viewBox="0 0 460 230" style="max-width:450px;width:100%;font-family:sans-serif;">
+        <rect x="55" y="20" width="390" height="170" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="133" y1="20" x2="133" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="211" y1="20" x2="211" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="289" y1="20" x2="289" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="367" y1="20" x2="367" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="55" y1="105" x2="445" y2="105" stroke="#eee" stroke-width="0.5"/>
+        <text x="55" y="207" text-anchor="middle" font-size="10" fill="#333">0</text>
+        <text x="133" y="207" text-anchor="middle" font-size="10" fill="#333">100</text>
+        <text x="211" y="207" text-anchor="middle" font-size="10" fill="#333">200</text>
+        <text x="289" y="207" text-anchor="middle" font-size="10" fill="#333">300</text>
+        <text x="367" y="207" text-anchor="middle" font-size="10" fill="#333">400</text>
+        <text x="445" y="207" text-anchor="middle" font-size="10" fill="#333">500</text>
+        <text x="48" y="193" text-anchor="end" font-size="10" fill="#333">0</text>
+        <text x="48" y="108" text-anchor="end" font-size="10" fill="#333">1</text>
+        <text x="48" y="23" text-anchor="end" font-size="10" fill="#333">2</text>
+        <text x="250" y="225" text-anchor="middle" font-size="11" fill="#333">Steps</text>
+        <text x="15" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,15,105)">Levels won</text>
+        <text x="250" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Ablation 0: Baseline</text>
+        <polyline points="55,190 450,190" fill="none" stroke="#1f77b4" stroke-width="1.5"/>
+        <line x1="153" y1="20" x2="153" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="252" y1="20" x2="252" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="350" y1="20" x2="350" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="450" y1="20" x2="450" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+      </svg>
+      <figcaption>Steps vs. levels won. Blue line: cumulative score. Red dashed lines: game overs.</figcaption>
+    </figure>
 
-    <p>I added a structured hypothesis registry. Every analyzer response now includes a <code>[HYPOTHESES]</code> section listing each hypothesis with an ID, confidence score, status, evidence for and against, and a test plan. A <code>HypothesisTracker</code> monitors how long the agent stays on one hypothesis without progress and injects a <code>[HYPOTHESIS DIVERSIFICATION REQUIRED]</code> prompt after 30 stale actions.</p>
+    <h4>3.2 Ablation 1: Hypothesis registry</h4>
 
-    <p><strong>Result:</strong> 500 actions, score 1. Level 1 completed on the second attempt in 114 actions. Level 2 timed out after 244 actions. One game over.</p>
+    <p>We added a structured hypothesis registry. Every analyzer response now includes a <code>[HYPOTHESES]</code> section listing each hypothesis with an ID, confidence score, status, evidence for and against, and a test plan. A <code>HypothesisTracker</code> monitors how long the agent stays on one hypothesis without progress and injects a <code>[HYPOTHESIS DIVERSIFICATION REQUIRED]</code> prompt after 30 stale actions.</p>
+
+    <p><strong>Result:</strong> 500 actions, score 1. Level 1 completed on the second attempt in 114 actions. Level 2 timed out after 244 actions. One game over. <span class="result-tag improvement">+1 SCORE</span></p>
 
     <p>This was the first time the agent solved Level 1. It generated 25+ unique hypotheses (vs. 1&ndash;2 in baseline) and the diversification trigger fired four times. The agent explored platform movement, click interactions, gate toggles, shape matching, erosion mechanics, cash-in cycles, and n-block clearing before converging on the correct solution path: stamp controls for 5-cell movement, G erosion timer at 2 columns per action, cash-in when G=0, and a $/8 switch toggling remote gates.</p>
 
-    <p>Level 2 failed because the agent spent 244 actions re-discovering mechanics and looping between two hypotheses (H3 and H9) without making progress.</p>
+    <p>Level 2 failed because the agent spent 244 actions re-discovering mechanics and looping between two hypotheses (H3 and H9) without making progress. This motivates H2: perhaps a different representation of the agent&rsquo;s beliefs would carry knowledge more effectively across levels.</p>
 
     <figure class="arc-figure">
         <img src="../images/arc3/ablation1_l1_solve.gif" alt="Ablation 1: agent solving Level 1">
-        <figcaption>Ablation 1: the agent explores hypotheses and solves Level 1 in 114 actions (second attempt). Note the player moving through the maze, toggling gates, and clearing the erosion region.</figcaption>
+        <figcaption>Figure 2. Ablation 1: the agent explores hypotheses and solves Level 1 in 114 actions (second attempt). Note the player moving through the maze, toggling gates, and clearing the erosion region.</figcaption>
     </figure>
 
-    <h3>Ablation 2: Shape analysis hints + cross-level transfer</h3>
+    <figure class="arc-figure">
+      <svg viewBox="0 0 460 230" style="max-width:450px;width:100%;font-family:sans-serif;">
+        <rect x="55" y="20" width="390" height="170" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="133" y1="20" x2="133" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="211" y1="20" x2="211" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="289" y1="20" x2="289" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="367" y1="20" x2="367" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="55" y1="105" x2="445" y2="105" stroke="#eee" stroke-width="0.5"/>
+        <text x="55" y="207" text-anchor="middle" font-size="10" fill="#333">0</text>
+        <text x="133" y="207" text-anchor="middle" font-size="10" fill="#333">100</text>
+        <text x="211" y="207" text-anchor="middle" font-size="10" fill="#333">200</text>
+        <text x="289" y="207" text-anchor="middle" font-size="10" fill="#333">300</text>
+        <text x="367" y="207" text-anchor="middle" font-size="10" fill="#333">400</text>
+        <text x="445" y="207" text-anchor="middle" font-size="10" fill="#333">500</text>
+        <text x="48" y="193" text-anchor="end" font-size="10" fill="#333">0</text>
+        <text x="48" y="108" text-anchor="end" font-size="10" fill="#333">1</text>
+        <text x="48" y="23" text-anchor="end" font-size="10" fill="#333">2</text>
+        <text x="250" y="225" text-anchor="middle" font-size="11" fill="#333">Steps</text>
+        <text x="15" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,15,105)">Levels won</text>
+        <text x="250" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Ablation 1: Hypothesis registry</text>
+        <polyline points="55,190 255,190 255,105 445,105" fill="none" stroke="#1f77b4" stroke-width="1.5"/>
+        <line x1="166" y1="20" x2="166" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+      </svg>
+      <figcaption>Steps vs. levels won. Blue line: cumulative score. Red dashed lines: game overs.</figcaption>
+    </figure>
 
-    <p>To help with Level 2, I added domain-specific guidance: a shape analysis section with a Python flood-fill example, a cross-level transfer protocol, and a lower diversification threshold (20 actions instead of 30).</p>
+    <h4>3.3 Ablation 2: Shape analysis hints + cross-level transfer</h4>
 
-    <p><strong>Result:</strong> 500 actions, score 0. Never completed Level 1. Three game overs. <em>Regression.</em></p>
+    <p>To help with Level 2, we added domain-specific guidance: a shape analysis section with a Python flood-fill example, a cross-level transfer protocol, and a lower diversification threshold (20 actions instead of 30). This tests H3: whether providing the model with relevant domain knowledge improves its performance.</p>
+
+    <p><strong>Result:</strong> 500 actions, score 0. Never completed Level 1. Three game overs. <span class="result-tag regression">REGRESSION</span></p>
 
     <p>This was worse than both the baseline and Ablation 1. The added prompt complexity caused hypothesis thrashing: 50+ hypothesis switches in 500 actions, constant bouncing between H2, H4, and H5. Game overs came at remarkably consistent intervals&mdash;actions 139, 134, and 138&mdash;suggesting the agent was reliably failing in the same way each time. It never committed to any hypothesis long enough to actually test it.</p>
 
-    <p>This confirmed something I&rsquo;d read in the ARC Prize blog: diminishing and even negative returns from additional hand-engineering. The model performs best with minimal, structural guidance&mdash;not domain-specific hints. <strong>Prompt complexity is inversely correlated with performance.</strong></p>
+    <p>This result refutes H3. It confirms something reported in the ARC Prize blog: diminishing and even negative returns from additional hand-engineering. The model performs best with minimal, structural guidance&mdash;not domain-specific hints. Prompt complexity is inversely correlated with performance. Structural scaffolding (how to organize thinking) helps; content scaffolding (what to think about) hurts.</p>
 
     <figure class="arc-figure">
         <img src="../images/arc3/ablation2_thrashing.gif" alt="Ablation 2: hypothesis thrashing">
-        <figcaption>Ablation 2: hypothesis thrashing in action. The agent cycles through game overs at regular intervals (~135 actions each), never committing to a strategy long enough to make progress. Compare the erratic movement to Ablation 1 above.</figcaption>
+        <figcaption>Figure 3. Ablation 2: hypothesis thrashing in action. The agent cycles through game overs at regular intervals (~135 actions each), never committing to a strategy long enough to make progress.</figcaption>
     </figure>
 
-    <h3>Ablation 3: Minimum commitment (killed early)</h3>
+    <figure class="arc-figure">
+      <svg viewBox="0 0 460 230" style="max-width:450px;width:100%;font-family:sans-serif;">
+        <rect x="55" y="20" width="390" height="170" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="133" y1="20" x2="133" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="211" y1="20" x2="211" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="289" y1="20" x2="289" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="367" y1="20" x2="367" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="55" y1="105" x2="445" y2="105" stroke="#eee" stroke-width="0.5"/>
+        <text x="55" y="207" text-anchor="middle" font-size="10" fill="#333">0</text>
+        <text x="133" y="207" text-anchor="middle" font-size="10" fill="#333">100</text>
+        <text x="211" y="207" text-anchor="middle" font-size="10" fill="#333">200</text>
+        <text x="289" y="207" text-anchor="middle" font-size="10" fill="#333">300</text>
+        <text x="367" y="207" text-anchor="middle" font-size="10" fill="#333">400</text>
+        <text x="445" y="207" text-anchor="middle" font-size="10" fill="#333">500</text>
+        <text x="48" y="193" text-anchor="end" font-size="10" fill="#333">0</text>
+        <text x="48" y="108" text-anchor="end" font-size="10" fill="#333">1</text>
+        <text x="48" y="23" text-anchor="end" font-size="10" fill="#333">2</text>
+        <text x="250" y="225" text-anchor="middle" font-size="11" fill="#333">Steps</text>
+        <text x="15" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,15,105)">Levels won</text>
+        <text x="250" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Ablation 2: Shape hints</text>
+        <polyline points="55,190 445,190" fill="none" stroke="#1f77b4" stroke-width="1.5"/>
+        <line x1="163" y1="20" x2="163" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="268" y1="20" x2="268" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="376" y1="20" x2="376" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+      </svg>
+      <figcaption>Steps vs. levels won. Blue line: cumulative score. Red dashed lines: game overs.</figcaption>
+    </figure>
 
-    <p>I reverted the prompt to the clean Ablation 1 version and added a minimum commitment constraint: block hypothesis switches if the current hypothesis has been active for fewer than 10 actions.</p>
+    <h4>3.4 Ablation 3: Minimum commitment constraint (killed early)</h4>
+
+    <p>We reverted the prompt to the clean Ablation 1 version and added a minimum commitment constraint: block hypothesis switches if the current hypothesis has been active for fewer than 10 actions.</p>
 
     <p><strong>Result:</strong> Killed at 154 actions, score 0, still on Level 1. The constraint fired once (blocked a switch at 9 actions, allowed at 12). One diversification trigger.</p>
 
-    <p>It reduced thrashing but wasn&rsquo;t enough on its own. I killed it early to try something more fundamental.</p>
+    <p>The constraint reduced thrashing but was insufficient on its own. We terminated the run early to pursue a more fundamental redesign of the belief representation (Ablation 4).</p>
 
-    <h3>Ablation 4: Knowledge model</h3>
+    <figure class="arc-figure">
+      <svg viewBox="0 0 460 230" style="max-width:450px;width:100%;font-family:sans-serif;">
+        <rect x="55" y="20" width="390" height="170" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="133" y1="20" x2="133" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="211" y1="20" x2="211" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="289" y1="20" x2="289" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="367" y1="20" x2="367" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="55" y1="105" x2="445" y2="105" stroke="#eee" stroke-width="0.5"/>
+        <text x="55" y="207" text-anchor="middle" font-size="10" fill="#333">0</text>
+        <text x="133" y="207" text-anchor="middle" font-size="10" fill="#333">100</text>
+        <text x="211" y="207" text-anchor="middle" font-size="10" fill="#333">200</text>
+        <text x="289" y="207" text-anchor="middle" font-size="10" fill="#333">300</text>
+        <text x="367" y="207" text-anchor="middle" font-size="10" fill="#333">400</text>
+        <text x="445" y="207" text-anchor="middle" font-size="10" fill="#333">500</text>
+        <text x="48" y="193" text-anchor="end" font-size="10" fill="#333">0</text>
+        <text x="48" y="108" text-anchor="end" font-size="10" fill="#333">1</text>
+        <text x="48" y="23" text-anchor="end" font-size="10" fill="#333">2</text>
+        <text x="250" y="225" text-anchor="middle" font-size="11" fill="#333">Steps</text>
+        <text x="15" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,15,105)">Levels won</text>
+        <text x="250" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Ablation 3: Min commitment</text>
+        <polyline points="55,190 175,190" fill="none" stroke="#1f77b4" stroke-width="1.5"/>
+      </svg>
+      <figcaption>Steps vs. levels won. Blue line: cumulative score. Red dashed lines: game overs.</figcaption>
+    </figure>
 
-    <p>Complete redesign. Instead of tracking hypotheses, the system now tracks <em>knowledge</em>:</p>
+    <h4>3.5 Ablation 4: Knowledge model</h4>
+
+    <p>Complete redesign of the belief representation. Instead of tracking hypotheses with confidence scores, the system now tracks <em>knowledge</em>:</p>
 
     <ul>
         <li><strong>KNOWN:</strong> confirmed mechanics with evidence</li>
@@ -134,11 +354,11 @@
         <li><strong>OBJECTIVE_THEORY:</strong> current best theory for how to score</li>
     </ul>
 
-    <p>The key principle: actions always target the most promising unknown. When many things are unknown (early game), exploration is naturally broad. As knowledge grows, the agent narrows focus to remaining unknowns. A <code>KnowledgeTracker</code> maintains a high-water mark&mdash;knowledge can only grow&mdash;and fires a <code>[STALE EXPLORATION]</code> nudge when no new knowledge is gained for 30 actions. Knowledge carries across game overs.</p>
+    <p>The key design principle: actions always target the most promising unknown. When many things are unknown (early game), exploration is naturally broad. As knowledge grows, the agent narrows focus to remaining unknowns. A <code>KnowledgeTracker</code> maintains a high-water mark&mdash;knowledge can only grow&mdash;and fires a <code>[STALE EXPLORATION]</code> nudge when no new knowledge is gained for 30 actions. Knowledge carries across game overs.</p>
 
-    <p><strong>Result:</strong> 500 actions, score 1. Level 1 completed on the <em>first attempt</em> in 49 actions. Level 2 timed out after 451 actions with six game overs.</p>
+    <p><strong>Result:</strong> 500 actions, score 1. Level 1 completed on the <em>first attempt</em> in 49 actions. Level 2 timed out after 451 actions with six game overs. <span class="result-tag best">BEST L1</span></p>
 
-    <p>49 actions to solve Level 1 vs. 114 in Ablation 1 and infinity in the baseline. The human baseline for Level 1 is 21 actions, so the agent is within 2.3x of human efficiency. Knowledge grew steadily from 0 to 4 to 7 known items, and only one stale nudge was needed (vs. four diversification triggers in Ablation 1).</p>
+    <p>49 actions to solve Level 1 vs. 114 in Ablation 1 and failure in the baseline&mdash;a 57% reduction over the best prior result. The human baseline for Level 1 is 21 actions, so the agent is within 2.3x of human efficiency. Knowledge grew steadily from 0 to 4 to 7 known items, and only one stale nudge was needed (vs. four diversification triggers in Ablation 1). This strongly supports H2: knowledge tracking outperforms hypothesis-confidence tracking.</p>
 
     <div class="arc-compare">
         <figure>
@@ -151,14 +371,85 @@
         </figure>
     </div>
 
-    <p>Level 2 remained unsolved but revealed a different bottleneck. Game overs came at strikingly regular intervals: 66, 68, 71, 71, 70, 68 actions. This ~70-action cadence suggests a fixed timer per attempt. The agent knows what to do&mdash;it has the mechanics mapped&mdash;but can&rsquo;t execute fast enough. Each analyzer cycle consumes 5&ndash;10 actions of overhead, and with only ~70 actions per attempt, that leaves just 7&ndash;14 actual decision points.</p>
+    <p>Level 2 remained unsolved but revealed a different bottleneck. Game overs came at strikingly regular intervals: 66, 68, 71, 71, 70, 68 actions. This ~70-action cadence suggests a fixed timer per attempt. The agent knows what to do&mdash;it has the mechanics mapped&mdash;but cannot execute fast enough. Each analyzer cycle consumes 5&ndash;10 actions of overhead, and with only ~70 actions per attempt, that leaves just 7&ndash;14 actual decision points. This motivates H4: perhaps longer action plans would improve execution efficiency.</p>
 
     <figure class="arc-figure">
         <img src="../images/arc3/ablation4_l2_struggle.gif" alt="Ablation 4: Level 2 game over cycle">
-        <figcaption>Ablation 4 on Level 2: the agent understands the mechanics but dies to the timer every ~70 actions. Six game overs, each attempt looking nearly identical&mdash;the bottleneck is execution speed, not reasoning.</figcaption>
+        <figcaption>Figure 4. Ablation 4 on Level 2: the agent understands the mechanics but dies to the timer every ~70 actions. Six game overs, each attempt looking nearly identical&mdash;the bottleneck is execution speed, not reasoning.</figcaption>
     </figure>
 
-    <h3>Summary</h3>
+    <figure class="arc-figure">
+      <svg viewBox="0 0 460 230" style="max-width:450px;width:100%;font-family:sans-serif;">
+        <rect x="55" y="20" width="390" height="170" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="133" y1="20" x2="133" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="211" y1="20" x2="211" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="289" y1="20" x2="289" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="367" y1="20" x2="367" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="55" y1="105" x2="445" y2="105" stroke="#eee" stroke-width="0.5"/>
+        <text x="55" y="207" text-anchor="middle" font-size="10" fill="#333">0</text>
+        <text x="133" y="207" text-anchor="middle" font-size="10" fill="#333">100</text>
+        <text x="211" y="207" text-anchor="middle" font-size="10" fill="#333">200</text>
+        <text x="289" y="207" text-anchor="middle" font-size="10" fill="#333">300</text>
+        <text x="367" y="207" text-anchor="middle" font-size="10" fill="#333">400</text>
+        <text x="445" y="207" text-anchor="middle" font-size="10" fill="#333">500</text>
+        <text x="48" y="193" text-anchor="end" font-size="10" fill="#333">0</text>
+        <text x="48" y="108" text-anchor="end" font-size="10" fill="#333">1</text>
+        <text x="48" y="23" text-anchor="end" font-size="10" fill="#333">2</text>
+        <text x="250" y="225" text-anchor="middle" font-size="11" fill="#333">Steps</text>
+        <text x="15" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,15,105)">Levels won</text>
+        <text x="250" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Ablation 4: Knowledge model</text>
+        <polyline points="55,190 93,190 93,105 445,105" fill="none" stroke="#1f77b4" stroke-width="1.5"/>
+        <line x1="145" y1="20" x2="145" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="198" y1="20" x2="198" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="253" y1="20" x2="253" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="309" y1="20" x2="309" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="363" y1="20" x2="363" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="416" y1="20" x2="416" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+      </svg>
+      <figcaption>Steps vs. levels won. Blue line: cumulative score. Red dashed lines: game overs.</figcaption>
+    </figure>
+
+    <h4>3.6 Ablation 5: Efficiency rules + extended interval</h4>
+
+    <p>Building on the knowledge model from Ablation 4, we made two changes designed to improve execution efficiency on Level 2. First, we added rules 8&ndash;9 to the knowledge model prompt: use longer plans of 8&ndash;10 steps when mechanics are known (vs. 2&ndash;3 steps during exploration), and inject game-over memory to skip re-exploration of already-known mechanics. Second, we added game-over memory injection to the runner and increased the <code>--interval</code> parameter from 10 to 15, reasoning that fewer adaptation cycles would reduce overhead.</p>
+
+    <p><strong>Result:</strong> 500 actions, score 0. Never completed Level 1. Three game overs at actions 145, 130, and 132. <span class="result-tag regression">REGRESSION</span></p>
+
+    <p>A clear regression from Ablation 4, and a second refutation of H3 (adding domain-specific prompt content degrades performance). More importantly, this experiment isolates a critical parameter: the adaptation interval. Increasing <code>--interval</code> from 10 to 15 meant less frequent re-evaluation of the game state, more actions wasted executing stale plans, and fewer opportunities to discover mechanics through observation. The game-over memory and longer plan rules could not compensate for this reduced adaptiveness.</p>
+
+    <p>The key lesson: the adaptation interval is a critical parameter. The default interval of 10 with 3&ndash;5 step plans is correct. The bottleneck on Level 2 is not plan length but the agent&rsquo;s ability to quickly converge on the right strategy within the ~70-action window. Longer plans with less frequent re-evaluation make this convergence slower, not faster.</p>
+
+    <figure class="arc-figure">
+      <svg viewBox="0 0 460 230" style="max-width:450px;width:100%;font-family:sans-serif;">
+        <rect x="55" y="20" width="390" height="170" fill="#fff" stroke="#000" stroke-width="1"/>
+        <line x1="133" y1="20" x2="133" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="211" y1="20" x2="211" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="289" y1="20" x2="289" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="367" y1="20" x2="367" y2="190" stroke="#eee" stroke-width="0.5"/>
+        <line x1="55" y1="105" x2="445" y2="105" stroke="#eee" stroke-width="0.5"/>
+        <text x="55" y="207" text-anchor="middle" font-size="10" fill="#333">0</text>
+        <text x="133" y="207" text-anchor="middle" font-size="10" fill="#333">100</text>
+        <text x="211" y="207" text-anchor="middle" font-size="10" fill="#333">200</text>
+        <text x="289" y="207" text-anchor="middle" font-size="10" fill="#333">300</text>
+        <text x="367" y="207" text-anchor="middle" font-size="10" fill="#333">400</text>
+        <text x="445" y="207" text-anchor="middle" font-size="10" fill="#333">500</text>
+        <text x="48" y="193" text-anchor="end" font-size="10" fill="#333">0</text>
+        <text x="48" y="108" text-anchor="end" font-size="10" fill="#333">1</text>
+        <text x="48" y="23" text-anchor="end" font-size="10" fill="#333">2</text>
+        <text x="250" y="225" text-anchor="middle" font-size="11" fill="#333">Steps</text>
+        <text x="15" y="105" text-anchor="middle" font-size="11" fill="#333" transform="rotate(-90,15,105)">Levels won</text>
+        <text x="250" y="14" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">Ablation 5: Efficiency rules</text>
+        <polyline points="55,190 445,190" fill="none" stroke="#1f77b4" stroke-width="1.5"/>
+        <line x1="168" y1="20" x2="168" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="270" y1="20" x2="270" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+        <line x1="373" y1="20" x2="373" y2="190" stroke="#e55" stroke-width="1" stroke-dasharray="4,3" opacity="0.7"/>
+      </svg>
+      <figcaption>Steps vs. levels won. Blue line: cumulative score. Red dashed lines: game overs.</figcaption>
+    </figure>
+
+    <h3>4. Results</h3>
+
+    <p class="table-caption">Table 1. Summary of all ablation experiments on puzzle ls20.</p>
 
     <table>
         <thead>
@@ -166,8 +457,9 @@
                 <th>Ablation</th>
                 <th>Approach</th>
                 <th>Score</th>
-                <th>L1 actions</th>
-                <th>Game overs</th>
+                <th>L1 Actions</th>
+                <th>Game Overs</th>
+                <th>Key Finding</th>
             </tr>
         </thead>
         <tbody>
@@ -177,6 +469,7 @@
                 <td>0</td>
                 <td>&mdash;</td>
                 <td>4</td>
+                <td>Hypothesis lock-in; never explores alternatives</td>
             </tr>
             <tr>
                 <td>1</td>
@@ -184,6 +477,7 @@
                 <td>1</td>
                 <td>114 (2nd try)</td>
                 <td>1</td>
+                <td>First L1 solve; diversification breaks lock-in (H1 confirmed)</td>
             </tr>
             <tr>
                 <td>2</td>
@@ -191,6 +485,7 @@
                 <td>0</td>
                 <td>&mdash;</td>
                 <td>3</td>
+                <td>Regression; prompt complexity causes thrashing (H3 refuted)</td>
             </tr>
             <tr>
                 <td>3</td>
@@ -198,6 +493,7 @@
                 <td>0</td>
                 <td>&mdash;</td>
                 <td>&mdash;</td>
+                <td>Reduced thrashing but insufficient alone (killed early)</td>
             </tr>
             <tr>
                 <td>4</td>
@@ -205,19 +501,43 @@
                 <td>1</td>
                 <td>49 (1st try)</td>
                 <td>6</td>
+                <td>Best L1: 57% faster than Abl. 1, 2.3x human (H2 confirmed)</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Efficiency rules + interval=15</td>
+                <td>0</td>
+                <td>&mdash;</td>
+                <td>3</td>
+                <td>Regression; interval size is critical (H3 refuted again, H4 refuted)</td>
             </tr>
         </tbody>
     </table>
 
-    <h3>What I learned</h3>
+    <h3>5. Discussion</h3>
 
-    <p><strong>Explicit belief management matters a lot.</strong> The jump from Ablation 0 to 1 is the biggest single improvement. Without it, the model locks into its first plausible narrative and never leaves. A structured registry that forces enumeration of alternatives breaks this default.</p>
+    <p><strong>H1 (belief management) is confirmed.</strong> The jump from Ablation 0 to Ablation 1 is the largest single improvement in this study. Without explicit belief management, the model locks into its first plausible narrative and never leaves. A structured registry that forces enumeration of alternatives breaks this default behavior. This is consistent with the broader finding that LLMs require external scaffolding to overcome context-window inertia in sequential reasoning tasks.</p>
 
-    <p><strong>Knowledge > hypotheses.</strong> Framing the agent&rsquo;s state as &ldquo;what do I know and what don&rsquo;t I know&rdquo; outperforms &ldquo;what do I believe and how confident am I.&rdquo; Hypotheses invite premature commitment to explanations. Knowledge items are monotonic&mdash;once confirmed, they stay confirmed&mdash;and unknowns give the agent a natural exploration target. This framing reduced Level 1 solve time by 57%.</p>
+    <p><strong>H2 (knowledge &gt; hypotheses) is confirmed.</strong> Framing the agent&rsquo;s state as &ldquo;what do I know and what don&rsquo;t I know&rdquo; outperforms &ldquo;what do I believe and how confident am I.&rdquo; Hypotheses invite premature commitment to explanations. Knowledge items are monotonic&mdash;once confirmed, they stay confirmed&mdash;and unknowns give the agent a natural exploration target. This representation reduced Level 1 solve time by 57% and eliminated the need for diversification triggers. The knowledge framing also carries better across game overs, since confirmed facts do not need to be re-derived.</p>
 
-    <p><strong>More prompt engineering makes things worse.</strong> Ablation 2 is the cautionary tale. Adding domain hints, worked examples, and transfer protocols degraded performance below baseline. The model has enough capability to discover mechanics on its own; overloading the prompt just causes thrashing. Structural scaffolding (how to organize thinking) helps. Content scaffolding (what to think about) hurts.</p>
+    <p><strong>H3 (domain hints help) is refuted twice.</strong> Both Ablation 2 and Ablation 5 demonstrate that adding domain-specific content to the prompt degrades performance. In Ablation 2, shape hints and worked examples caused hypothesis thrashing. In Ablation 5, efficiency rules and game-over memory failed to improve on the clean knowledge model. The model has sufficient capability to discover mechanics on its own; overloading the prompt causes interference. We draw a sharp distinction: <em>structural scaffolding</em> (how to organize thinking) helps, while <em>content scaffolding</em> (what to think about) hurts.</p>
 
-    <p><strong>The next bottleneck is execution speed, not reasoning.</strong> On Level 2, the agent dies to a timer, not to confusion. It knows the mechanics but can&rsquo;t act on them fast enough within the ~70-action window. The fix is probably longer action plans&mdash;letting the agent commit to 20-step sequences instead of 10 when confidence is high&mdash;rather than any change to the reasoning layer.</p>
+    <p><strong>H4 (longer plans help) is refuted.</strong> Ablation 5 shows that increasing plan length and the adaptation interval actively harms performance. The intuition was that fewer, longer plans would reduce overhead on Level 2. In practice, less frequent adaptation means more actions wasted executing plans based on stale or incorrect beliefs. The bottleneck on Level 2 is not plan length but the speed of strategic convergence within a tight action window. The default interval of 10 with short 3&ndash;5 step plans remains the correct configuration.</p>
+
+    <p>A recurring theme across all experiments is the importance of <em>parameter sensitivity</em>. The adaptation interval, diversification threshold, and minimum commitment window all have outsized effects relative to the complexity of the prompt content. The most effective interventions are structural and minimal: a knowledge ontology (KNOWN/UNKNOWN/EXPLORING) with a stale-exploration nudge, running at the default interval. Everything else is either neutral or harmful.</p>
+
+    <h3>6. Conclusion and Future Work</h3>
+
+    <p>We have shown that an LLM agent playing a procedurally generated game benefits substantially from structured knowledge tracking over hypothesis-confidence tracking, and that explicit belief management of any kind is essential to avoid narrative lock-in. Domain-specific prompt content reliably degrades performance, and the adaptation interval is a more important parameter than plan length.</p>
+
+    <p>The remaining bottleneck is Level 2 execution. The agent has the right knowledge but cannot act on it within the ~70-action window. Possible directions include:</p>
+
+    <ul>
+        <li><strong>Adaptive interval:</strong> Use a short interval (e.g., 5) during exploration and a longer interval (e.g., 15) only after all mechanics are confirmed as KNOWN, rather than a fixed global parameter.</li>
+        <li><strong>Pre-compiled action sequences:</strong> Once a mechanic is confirmed, compile it into a fixed action sequence that executes without re-analysis, reducing per-cycle overhead.</li>
+        <li><strong>Cross-level knowledge seeding:</strong> Inject the Level 1 knowledge state directly into the Level 2 prompt, bypassing the re-discovery phase entirely.</li>
+        <li><strong>Multi-puzzle evaluation:</strong> All experiments here use a single puzzle (ls20). Validating these findings across a diverse set of ARC-3 puzzles is necessary to establish generality.</li>
+    </ul>
 
                 </div>
             </div>

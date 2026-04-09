@@ -1,0 +1,68 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 1.25rem 1.5rem 2rem;
+  max-width: 52rem;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: #000;
+  background: #fff;
+}
+
+.site-nav {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.site-nav a {
+  color: #00e;
+  text-decoration: underline;
+}
+
+.site-nav a:visited {
+  color: #551a8b;
+}
+
+.site-nav a:hover {
+  text-decoration: underline;
+}
+
+.site-nav .sep {
+  margin: 0 0.35rem;
+  color: #333;
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 1.35rem;
+  font-weight: bold;
+  margin: 0 0 1rem;
+}
+
+.link-list {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.link-list li {
+  margin-bottom: 0.35rem;
+}
+
+.link-list a {
+  color: #00e;
+}
+
+.link-list a:visited {
+  color: #551a8b;
+}

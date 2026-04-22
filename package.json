@@ -1,0 +1,20 @@
+{
+  "name": "personal-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:notes": "node build/compile-notes.mjs",
+    "watch:notes": "chokidar \"content/notes/**/*.md\" -c \"node build/compile-notes.mjs\"",
+    "dev:notes": "node --watch build/compile-notes.mjs"
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "gray-matter": "^4.0.3",
+    "katex": "^0.16.10",
+    "markdown-it": "^14.1.0",
+    "markdown-it-texmath": "^1.0.0"
+  }
+}

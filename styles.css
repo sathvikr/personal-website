@@ -66,3 +66,108 @@ h1 {
 .link-list a:visited {
   color: #551a8b;
 }
+
+.note-index h1 {
+  font-size: 1.5rem;
+  margin: 0 0 1.25rem;
+}
+
+.note-block {
+  margin: 0;
+}
+
+.note-inline-title {
+  color: #7a0c0c;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  margin: 0 0 0.25rem;
+  line-height: 1.25;
+}
+
+.note-inline-date {
+  font-style: italic;
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+}
+
+.note-sep {
+  border: 0;
+  border-top: 1px solid #000;
+  margin: 1.75rem 0 1.75rem;
+}
+
+.note-article {
+  max-width: 100%;
+}
+
+.note-article .note-header {
+  margin-bottom: 1rem;
+}
+
+.note-article .note-title {
+  color: #7a0c0c;
+  font-size: 1.45rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  margin: 0 0 0.25rem;
+}
+
+.note-article .note-date-line {
+  font-style: italic;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.note-body p {
+  margin: 0 0 0.9rem;
+  text-align: left;
+}
+
+.note-body p:last-child {
+  margin-bottom: 0;
+}
+
+.note-body hr {
+  border: 0;
+  border-top: 1px solid #000;
+  margin: 1.25rem 0;
+}
+
+.note-body .note-figure {
+  margin: 1.25rem auto;
+  text-align: center;
+  max-width: 32rem;
+}
+
+.note-body .note-figure figcaption {
+  font-size: 0.92rem;
+  text-align: left;
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
+.note-body .note-footnote {
+  font-size: 0.88rem;
+  font-style: italic;
+  margin-top: 1.5rem;
+  color: #333;
+}
+
+.note-body .katex-display {
+  display: block;
+  margin: 1rem auto;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.note-body section {
+  margin: 1rem 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.note-body section:has(> .katex-display) {
+  text-align: center;
+}

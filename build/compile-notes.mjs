@@ -1,0 +1,156 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import matter from "gray-matter";
+import fg from "fast-glob";
+import MarkdownIt from "markdown-it";
+import texmath from "markdown-it-texmath";
+import katex from "katex";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const root = path.join(__dirname, "..");
+const katexCdn = "https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css";
+
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+})
+  .use(texmath, {
+    engine: katex,
+    delimiters: "dollars",
+    katexOptions: {
+      throwOnError: false,
+    },
+  });
+
+const esc = (s) =>
+  String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+const nav = (level) => {
+  const p = level === 0 ? "" : "../";
+  return `<nav class="site-nav" aria-label="Main">
+    <a href="${p}index.html">home</a><span class="sep">|</span>
+    <a href="${p}books.html">books</a><span class="sep">|</span>
+    <a href="${p}notes.html">notes</a><span class="sep">|</span>
+    <a href="${p}contact.html">contact</a>
+  </nav>`;
+};
+
+const toYmd = (v) => {
+  if (v instanceof Date) {
+    const y = v.getUTCFullYear();
+    const m = String(v.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(v.getUTCDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  }
+  if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v)) return v.slice(0, 10);
+  return null;
+};
+
+const ymdToLong = (ymd) => {
+  if (!ymd) return "";
+  const [Y, M, D] = ymd.split("-").map((x) => parseInt(x, 10));
+  const t = new Date(Y, M - 1, D);
+  if (Number.isNaN(t.getTime())) return ymd;
+  return t.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+};
+
+const formatDateLong = (d) => ymdToLong(toYmd(d) ?? String(d).slice(0, 10));
+
+const readNotes = async () => {
+  const files = await fg("**/*.md", {
+    cwd: path.join(root, "content/notes"),
+    onlyFiles: true,
+  });
+  const list = files.filter(
+    (f) => f !== "FORMAT.md" && !path.basename(f).startsWith("_")
+  );
+  const items = await Promise.all(
+    list.map(async (rel) => {
+      const full = path.join(root, "content/notes", rel);
+      const raw = await fs.readFile(full, "utf8");
+      const { data, content } = matter(raw);
+      const base = path.basename(rel, ".md");
+      const slug = typeof data.slug === "string" && data.slug ? data.slug : base;
+      const title =
+        typeof data.title === "string" && data.title
+          ? data.title
+          : base.replace(/^\d{4}-\d{2}-\d{2}-/, "").replace(/-/g, " ");
+      let date = toYmd(data.date);
+      if (!date) {
+        const m = base.match(/^(\d{4}-\d{2}-\d{2})/);
+        date = m ? m[1] : "1970-01-01";
+      }
+      return {
+        file: rel,
+        base,
+        slug,
+        title,
+        date,
+        content,
+        data,
+      };
+    })
+  );
+  items.sort((a, b) => b.date.localeCompare(a.date) || a.slug.localeCompare(b.slug));
+  return items;
+};
+
+const buildNotesPage = (items) => {
+  const blocks = items
+    .map((it, i) => {
+      const bodyHtml = md.render(it.content);
+      const long = formatDateLong(it.date);
+      const sid = it.slug;
+      const titleId = `title-${sid}`;
+      const sec = `  <section class="note-block" id="${sid}" aria-labelledby="${titleId}">
+    <h2 class="note-inline-title" id="${titleId}">${esc(
+        it.title
+      )}</h2>
+    <p class="note-inline-date">${esc(long)}</p>
+    <div class="note-body">
+${bodyHtml}
+    </div>
+  </section>`;
+      const after =
+        i < items.length - 1 ? "\n  <hr class=\"note-sep\" aria-hidden=\"true\">\n" : "";
+      return sec + after;
+    })
+    .join("\n");
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notes — Sathvik Redrouthu</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="${katexCdn}" crossorigin="anonymous">
+</head>
+<body>
+  ${nav(0)}
+
+  <main class="note-index">
+    <h1>Notes</h1>
+${blocks}
+  </main>
+</body>
+</html>
+`;
+};
+
+async function main() {
+  const items = await readNotes();
+  const pageHtml = buildNotesPage(items);
+  await fs.writeFile(path.join(root, "notes.html"), pageHtml, "utf8");
+  console.log(`Wrote notes.html with ${items.length} note(s)`);
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

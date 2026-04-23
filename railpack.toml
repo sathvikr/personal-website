@@ -2,4 +2,4 @@
 cmd = "npm run build:notes"
 
 [start]
-cmd = "npx http-server . -p $PORT"
+cmd = "./node_modules/.bin/http-server . -p $PORT"

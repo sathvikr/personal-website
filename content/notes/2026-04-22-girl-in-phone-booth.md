@@ -23,4 +23,4 @@ And on the rock-hard ground, her head lay.
 She tries dozing off, into a slumber,  
 Ignoring her empty stomach's hunger.
 
-<p class="note-footnote">Thanks to Nicole Yang for reading drafts.</p>
+<p class="note-footnote">Thanks to Nicole for reading drafts.</p>

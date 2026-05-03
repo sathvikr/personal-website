@@ -31,4 +31,4 @@ Giving the dead girl,
 Her very first  
 Birthday party.
 
-<p class="note-footnote">Thanks to Julie for reading drafts.</p>
+<p class="note-footnote">100 Letters To A Dead Girl.</p>

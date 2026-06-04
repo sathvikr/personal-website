@@ -32,3 +32,5 @@ Her very first
 Birthday party.
 
 <p class="note-footnote">100 Letters To A Dead Girl.</p>
+
+<p class="note-footnote">Thanks to Jan for feedback.</p>

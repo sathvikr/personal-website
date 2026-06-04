@@ -120,6 +120,10 @@ h1 {
   font-size: 0.95rem;
 }
 
+.note-body {
+  counter-reset: footnote;
+}
+
 .note-body p {
   margin: 0 0 0.9rem;
   text-align: left;
@@ -136,16 +140,16 @@ h1 {
 }
 
 .note-body .note-figure {
-  margin: 1.25rem auto;
-  text-align: center;
-  max-width: 32rem;
+  margin: 1.25rem 0;
+  text-align: left;
+  max-width: 16rem;
 }
 
 .note-body .note-figure img {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .note-body .note-figure figcaption {
@@ -158,8 +162,19 @@ h1 {
 .note-body .note-footnote {
   font-size: 0.88rem;
   font-style: italic;
-  margin-top: 1.5rem;
+  margin: 0.75rem 0 0.15rem;
   color: #333;
+  counter-increment: footnote;
+}
+
+.note-body .note-footnote::before {
+  content: counter(footnote) ". ";
+  font-style: normal;
+}
+
+.note-body .note-footnote + .note-footnote {
+  margin-top: 0.2rem;
+  margin-bottom: 0;
 }
 
 .note-body .katex-display {

@@ -141,6 +141,13 @@ h1 {
   max-width: 32rem;
 }
 
+.note-body .note-figure img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
 .note-body .note-figure figcaption {
   font-size: 0.92rem;
   text-align: left;

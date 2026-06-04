@@ -60,3 +60,5 @@ The two of them were one.
 <figure class="note-figure">
 <img src="img/mday.png" alt="Memorial at a tree in a cemetery: a framed photograph of a young man and white lilies in a vase.">
 </figure>
+
+<p class="note-footnote">Thanks to Tuyako for discussing this poem with me.</p>

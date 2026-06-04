@@ -5,7 +5,7 @@
 }
 
 html {
-  font-size: 100%;
+  font-size: 11pt;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -127,6 +127,27 @@ h1 {
 .note-body p {
   margin: 0 0 0.9rem;
   text-align: left;
+}
+
+.note-body ol {
+  margin: 0 0 0.9rem;
+  padding-left: 1.5rem;
+}
+
+.note-body li {
+  margin-bottom: 0.35rem;
+}
+
+.note-body li:last-child {
+  margin-bottom: 0;
+}
+
+.note-body a {
+  color: #00e;
+}
+
+.note-body a:visited {
+  color: #551a8b;
 }
 
 .note-body p:last-child {

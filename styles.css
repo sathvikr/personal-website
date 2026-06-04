@@ -136,16 +136,16 @@ h1 {
 }
 
 .note-body .note-figure {
-  margin: 1.25rem auto;
-  text-align: center;
-  max-width: 32rem;
+  margin: 1.25rem 0;
+  text-align: left;
+  max-width: 16rem;
 }
 
 .note-body .note-figure img {
   max-width: 100%;
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .note-body .note-figure figcaption {

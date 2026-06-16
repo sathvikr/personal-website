@@ -187,6 +187,16 @@ h1 {
   line-height: 1.4;
 }
 
+.note-body .note-embed {
+  margin: 1.25rem 0;
+  max-width: 28rem;
+}
+
+.note-body .note-embed iframe {
+  display: block;
+  width: 100%;
+}
+
 .note-body .note-footnote {
   font-size: 0.88rem;
   font-style: italic;

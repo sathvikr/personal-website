@@ -101,18 +101,30 @@ const readNotes = async () => {
   return items;
 };
 
-const buildNotesPage = (items) => {
+const cssVersion = async () => {
+  try {
+    const st = await fs.stat(path.join(root, "styles.css"));
+    return Math.floor(st.mtimeMs);
+  } catch {
+    return Date.now();
+  }
+};
+
+const buildNotesPage = (items, cssVer) => {
   const blocks = items
     .map((it, i) => {
       const bodyHtml = md.render(it.content);
       const long = formatDateLong(it.date);
       const sid = it.slug;
       const titleId = `title-${sid}`;
+      const sourceHtml = it.data.source
+        ? `\n    <p class="note-source">${md.renderInline(String(it.data.source))}</p>`
+        : "";
       const sec = `  <section class="note-block" id="${sid}" aria-labelledby="${titleId}">
     <h2 class="note-inline-title" id="${titleId}">${esc(
         it.title
       )}</h2>
-    <p class="note-inline-date">${esc(long)}</p>
+    <p class="note-inline-date">${esc(long)}</p>${sourceHtml}
     <div class="note-body">
 ${bodyHtml}
     </div>
@@ -128,7 +140,7 @@ ${bodyHtml}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Notes — Sathvik Redrouthu</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=${cssVer}">
   <link rel="stylesheet" href="${katexCdn}" crossorigin="anonymous">
 </head>
 <body>
@@ -145,7 +157,8 @@ ${blocks}
 
 async function main() {
   const items = await readNotes();
-  const pageHtml = buildNotesPage(items);
+  const cssVer = await cssVersion();
+  const pageHtml = buildNotesPage(items, cssVer);
   await fs.writeFile(path.join(root, "notes.html"), pageHtml, "utf8");
   console.log(`Wrote notes.html with ${items.length} note(s)`);
 }

@@ -211,6 +211,56 @@ h1 {
   width: 100%;
 }
 
+.note-body .fugue {
+  /* Break out of the narrow note column so three voices fit side by side,
+     but only just wide enough for the lines — kept centered on the page. */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(94vw, 56rem);
+  margin: 1.5rem 0;
+}
+
+.note-body .fugue-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: stretch;
+}
+
+.note-body .fugue-voice {
+  padding: 0 1rem;
+}
+
+.note-body .fugue-voice:first-child {
+  padding-left: 0;
+}
+
+.note-body .fugue-voice:last-child {
+  padding-right: 0;
+}
+
+.note-body .fugue-voice + .fugue-voice {
+  border-left: 1px solid #ccc;
+}
+
+.note-body .fugue-voice p {
+  margin: 0 0 0.9rem;
+}
+
+.note-body .fugue-voice p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 40rem) {
+  .note-body .fugue-row {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  .note-body .fugue-voice:empty {
+    display: none;
+  }
+}
+
 .note-body .note-footnote {
   font-size: 0.88rem;
   font-style: italic;

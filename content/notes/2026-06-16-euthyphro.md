@@ -4,7 +4,10 @@ date: "2026-06-16"
 source: "[[book]](https://philosophyintrocourse.com/wp-content/uploads/2016/04/plato-euthyphro.pdf)"
 ---
 
-[1] Socrates outlines a problem with a god-given absolute piety within a polytheistic religion.
+[1] Socrates outlines a problem with a god-given absolute piety within a polytheistic religion: are pious things pious because the gods love them, or do the gods love them because they are inherently pious?
+
+- The main framework for the former is divine command theory. Risk: morality becomes arbitrary.
+- Frameworks for the latter: moral realism, rationalist ethics, etc. Risk: morality is defined outside of god(s).
 
 [2] Euthyphro's claims are that 1) Zeus would prosecute his own father for manslaughter, 2) he is the only man who knows what the gods would do (perfect religious knowledge), and 3) Man should aspire to do what God would.
 

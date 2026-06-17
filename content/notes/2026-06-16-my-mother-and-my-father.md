@@ -1,7 +1,7 @@
 ---
 title: "My Mother and My Father"
 date: "2026-06-16"
-source: "[video](https://www.youtube.com/watch?v=-v6W9Ne9MB0)"
+source: "[[video]](https://www.youtube.com/watch?v=-v6W9Ne9MB0)"
 ---
 
 <figure class="note-embed">

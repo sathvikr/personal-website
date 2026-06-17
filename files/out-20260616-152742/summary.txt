@@ -1,0 +1,93 @@
+=== Simulated Annealing Placement Report ===
+Generated:    20260616-152755
+Output dir:   /home/sredrout/final-2026-main/out-20260616-152742
+
+Input
+-----
+Source:       synth:medium
+Die:          4000.0000 x 4000.0000
+Macros:       64
+Pins:         16
+Nets:         200
+
+Cost weights
+------------
+alpha (HPWL):       1.0000
+beta  (overlap):    10.0000
+gamma (boundary):   100.0000
+Total = alpha*HPWL + beta*overlap + gamma*boundary
+
+SA schedule
+-----------
+T_start:     100.0000
+T_end:       0.0010
+Cooling:     0.9950
+Iters/T:     200
+Max iters:   30000
+Move scale:  0.1000 of die side
+Swap prob:   0.1000
+Seed:        42
+Snapshots:   80
+
+Initial random placement
+------------------------
+HPWL:        898160.3713
+Overlap:     3754743.7835
+Boundary:    0.0000
+Total:       38445598.2058
+
+CPU SA result
+-------------
+HPWL:        796310.1080
+Overlap:     17.0460
+Boundary:    0.0000
+Total:       796480.5679
+Moves:       30000
+Accepted:    606 (2.0200%)
+Runtime:     3474.1616 ms
+Improvement: 97.9283% reduction
+
+CPU sanity checks
+-----------------
+[FAIL] Final overlap == 0 (no macros overlap)
+[OK]   Final boundary == 0 (all macros inside die)
+[OK]   Final cost <= initial cost
+[OK]   best_cost monotonically non-increasing
+[OK]   Total = alpha*HPWL + beta*overlap + gamma*boundary
+
+GPU SA result
+-------------
+HPWL:        755104.6875
+Overlap:     23.8239
+Boundary:    0.0000
+Total:       755342.9375
+Chains:      64
+Best chain:  43
+Runtime:     1240.7763 ms
+Improvement: 98.0353% reduction
+
+GPU sanity checks
+-----------------
+[FAIL] Final overlap == 0
+[OK]   Final boundary == 0
+[OK]   Final cost <= initial cost
+[OK]   best-chain best_cost monotonically non-increasing
+[OK]   Total = alpha*HPWL + beta*overlap + gamma*boundary
+
+Artifacts
+---------
+  summary.txt
+  placement_cpu.svg
+  convergence_cpu.gif
+  convergence_gpu.gif
+  placement_gpu.svg
+  trace_cpu.csv
+  placement_before.svg
+  trace_gpu.csv
+
+To plot the convergence curve from CSV:
+  python3 -c "import pandas as pd, matplotlib.pyplot as plt;\
+    d=pd.read_csv('trace_cpu.csv');\
+    plt.semilogy(d['move'], d['best_total']);\
+    plt.xlabel('move'); plt.ylabel('best total cost');\
+    plt.title('SA convergence'); plt.show()"

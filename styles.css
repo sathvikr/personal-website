@@ -279,6 +279,92 @@ h1 {
   margin-bottom: 0;
 }
 
+.note-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 0 1rem;
+  font-size: 0.92rem;
+}
+
+.note-body th,
+.note-body td {
+  border: 1px solid #ccc;
+  padding: 0.3rem 0.6rem;
+}
+
+.note-body th {
+  background: #f3f3f3;
+  text-align: left;
+}
+
+.note-body .result-plot {
+  margin: 0.5rem 0 1rem;
+  text-align: center;
+}
+
+.note-body .result-plot img {
+  max-width: 100%;
+  height: auto;
+}
+
+.note-body .result-plot figcaption {
+  font-size: 0.88rem;
+  font-style: italic;
+  color: #333;
+  margin-top: 0.25rem;
+}
+
+.note-body .result-gifs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.note-body .result-gifs figure {
+  margin: 0;
+}
+
+.note-body .result-gifs img {
+  width: 100%;
+  height: auto;
+  border: 1px solid #e2e2e2;
+}
+
+.note-body .result-gifs figcaption {
+  font-size: 0.88rem;
+  font-style: italic;
+  color: #333;
+  margin-top: 0.3rem;
+  text-align: center;
+}
+
+@media (max-width: 36rem) {
+  .note-body .result-gifs {
+    grid-template-columns: 1fr;
+  }
+}
+
+.note-body pre {
+  background: #f6f6f6;
+  border: 1px solid #e2e2e2;
+  border-radius: 4px;
+  padding: 0.75rem 0.9rem;
+  overflow-x: auto;
+  margin: 0 0 0.9rem;
+}
+
+.note-body pre code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.note-body code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
 .note-body .katex-display {
   display: block;
   margin: 1rem auto;

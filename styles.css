@@ -301,7 +301,7 @@ h1 {
 }
 
 .note-body .note-footnote::before {
-  content: "[" counter(footnote) "] ";
+  content: counter(footnote) ". ";
   font-style: normal;
 }
 

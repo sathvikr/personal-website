@@ -123,7 +123,7 @@ const buildNotesPage = (items, cssVer) => {
       const sec = `  <section class="note-block" id="${sid}" aria-labelledby="${titleId}">
     <h2 class="note-inline-title" id="${titleId}">${esc(
         it.title
-      )}</h2>
+      )}<a class="note-permalink" href="#${sid}" aria-label="Copy link to this note" title="Copy link to this note"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></a></h2>
     <p class="note-inline-date">${esc(long)}</p>${sourceHtml}
     <div class="note-body">
 ${bodyHtml}
@@ -150,6 +150,25 @@ ${bodyHtml}
     <h1>Notes</h1>
 ${blocks}
   </main>
+  <script>
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest(".note-permalink");
+    if (!a) return;
+    e.preventDefault();
+    var hash = a.getAttribute("href");
+    var url = location.origin + location.pathname + hash;
+    if (history.replaceState) history.replaceState(null, "", hash);
+    function flash() {
+      a.classList.add("copied");
+      setTimeout(function () { a.classList.remove("copied"); }, 1200);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(flash, flash);
+    } else {
+      flash();
+    }
+  });
+  </script>
 </body>
 </html>
 `;

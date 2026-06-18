@@ -99,6 +99,40 @@ h1 {
   font-size: 0.95rem;
 }
 
+.note-permalink {
+  margin-left: 0.45rem;
+  font-weight: normal;
+  color: #bbb;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.12s, color 0.12s;
+}
+
+.note-permalink svg {
+  vertical-align: middle;
+  position: relative;
+  top: -0.12em;
+}
+
+.note-block:hover .note-permalink {
+  opacity: 1;
+}
+
+.note-permalink:hover {
+  color: #00e;
+}
+
+.note-permalink.copied {
+  color: #2e7d32;
+}
+
+.note-permalink.copied::after {
+  content: " link copied";
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #2e7d32;
+}
+
 .note-source {
   margin: -0.6rem 0 0.85rem;
   font-size: 0.95rem;

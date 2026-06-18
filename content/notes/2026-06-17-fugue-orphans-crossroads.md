@@ -2,6 +2,11 @@
 title: "Fugue: The orphans' crossroads (Bach, \"Little\" Fugue in G minor, 0:00-0:55)"
 date: "2026-06-17"
 ---
+
+<figure class="note-embed">
+<iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/1kJmgDNxLOKC6Kq6uRFyOT?utm_source=generator&theme=0&si=64269d5836304414" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+</figure>
+
 <div class="fugue">
 <div class="fugue-row">
 <div class="fugue-voice">

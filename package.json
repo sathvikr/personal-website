@@ -2,11 +2,6 @@
   "name": "personal-website",
   "private": true,
   "type": "module",
-  "scripts": {
-    "build:notes": "node build/compile-notes.mjs",
-    "watch:notes": "chokidar \"content/notes/**/*.md\" -c \"node build/compile-notes.mjs\"",
-    "dev:notes": "node --watch build/compile-notes.mjs"
-  },
   "devDependencies": {
     "chokidar-cli": "^3.0.0"
   },

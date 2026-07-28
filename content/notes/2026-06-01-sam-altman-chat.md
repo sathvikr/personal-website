@@ -18,4 +18,3 @@ I met Sam Altman a couple times but I didn't have a solid chance to chat until S
 
 <li>"Only you have enough context to understand the best decision for yourself. Be careful and don't average advice."</li>
 </ul>
-I think I've internalized this well, but I've found many freshman friends who I think could benefit from hearing these three things.

@@ -117,3 +117,73 @@ Note this is a shortcut to $\langle \chi, \psi \rangle = \frac{1}{|G|} \sum_{g \
 - $\langle \chi, \psi \rangle$ says there are $(2)(1) = 2$ shared $\chi_1$ copies and $(1)(3) = 3$ shared $\chi_2$ copies for a total of $2 + 3 = 5$ shared irreducible character copies.
 
 Thus, the inner product $\langle \chi, \psi \rangle$ counts the number of copies of irreducibles $\chi_1, \chi_2$ by $m_i n_i$, where each $m_i, n_i$ is a multiplicity of $\chi_1, \chi_2$ respectively.
+
+**What a character table tells us about a representation.**
+
+A character table does more than simply list irreducible characters. Once the irreducible rows are known, it lets us decompose the character of any representation into irreducible pieces.
+
+Suppose
+
+$$
+\chi = m_1\chi_1 + m_2\chi_2 + \cdots + m_r\chi_r
+$$
+
+where $\chi_1, \ldots, \chi_r$ are irreducible characters and $m_i$ is the multiplicity of $\chi_i$. By orthogonality,
+
+$$
+\begin{aligned}
+\langle \chi, \chi_j \rangle = \left\langle \sum_{i=1}^{r} m_i\chi_i,\ \chi_j \right\rangle &= \sum_{i=1}^{r} m_i \langle \chi_i, \chi_j \rangle \\
+&= m_j \langle \chi_j, \chi_j \rangle \\
+&= m_j
+\end{aligned}
+$$
+
+so the inner product of a character $\chi$ with one of its irreducible constituents $\chi_j$ is its multiplicity $m_j$.
+
+**Example 3.1.** Consider the irreducible characters of $S_3$:
+
+$$
+\begin{aligned}
+\chi_1 &= (1, 1, 1) \\
+\chi_2 &= (1, -1, 1) \\
+\chi_3 &= (2, 0, -1)
+\end{aligned}
+$$
+
+and consider the degree-4 character $\chi = (4, 0, 1)$. Then,
+
+$$
+\begin{aligned}
+\langle \chi, \chi_1 \rangle &= \frac{1}{6}\big(1(4)(1) + 3(0)(1) + 2(1)(1)\big) = 1 \\
+\langle \chi, \chi_2 \rangle &= \frac{1}{6}\big(1(4)(1) + 3(0)(-1) + 2(1)(1)\big) = 1 \\
+\langle \chi, \chi_3 \rangle &= \frac{1}{6}\big(1(4)(2) + 3(0)(0) + 2(1)(-1)\big) = 1
+\end{aligned}
+$$
+
+which correspond to the multiplicity $m_i$ of each irreducible $\chi_i$ in $\chi$. Hence, $\chi = \chi_1 + \chi_2 + \chi_3$. Checking the degrees (by plugging in the identity), we find that:
+
+$$
+\chi_1(1) + \chi_2(1) + \chi_3(1) = 1 + 1 + 2 = 4 = \chi(1)
+$$
+
+which adds up.
+
+Note then that we immediately know $\chi$ is reducible because $\chi \neq \chi_1$ and $\langle \chi, \chi_1 \rangle = 1 \neq 0$.
+
+The next proposition goes further into character irreducibility without finding invariant subspaces.
+
+**Proposition 3.1.** Suppose $\chi : G \to \mathbb{C}$ is the character of some representation. If $\langle \chi, \chi \rangle = 1$, then $\chi$ is irreducible. If $\langle \chi, \chi \rangle > 1$, then $\chi$ is reducible.
+
+*Proof.* We know $\chi = \sum_{i=1}^{r} m_i\chi_i$. Since $\langle \chi_i, \chi_j \rangle = \delta_{ij}$, $\langle \chi, \chi \rangle = \sum_{i=1}^{r} m_i^2$. The only way for this to equal 1 is if exactly one $m_i = 1$, and the remaining $m_j = 0$. Thus, $\chi = (1)\chi_i$ for some $1 \leq i \leq r$, implying $\chi$ is irreducible.
+
+Similarly, if $\langle \chi, \chi \rangle > 1$, either $m_i = 1, m_j > 0$, or $m_i > 1$, so $\chi$ has more than a single irreducible $\chi_i$ component and is thus reducible. $\square$
+
+**Example 3.2** (The character of a direct sum). Suppose $(V, \rho_V)$ and $(W, \rho_W)$ are representations with characters $\chi_V$ and $\chi_W$ respectively. The action on the direct sum $V \oplus W$ has the representation $\rho_{V \oplus W} : G \to GL(V \oplus W)$:
+
+$$
+\rho_{V \oplus W}(g) = \begin{pmatrix} \rho_V(g) & 0 \\ 0 & \rho_W(g) \end{pmatrix}
+$$
+
+with character $\chi_{V \oplus W}(g) = \operatorname{tr}(\rho_{V \oplus W}(g)) = \operatorname{tr}(\rho_V(g)) + \operatorname{tr}(\rho_W(g)) = \chi_V(g) + \chi_W(g)$.
+
+Then, suppose $V \cong V_1 \oplus V_2 \oplus V_3$. This implies $\chi = \chi_1 + \chi_2 + \chi_3$. Conversely, if $\chi_V = 2\chi_1 + \chi_2$, this implies $V$ has decomposition $V \cong V_1 \oplus V_1 \oplus V_2$.

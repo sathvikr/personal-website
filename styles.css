@@ -317,6 +317,15 @@ h1 {
 }
 
 @media (max-width: 40rem) {
+  /* The voices stack here, so breaking out of the column buys nothing — and
+     `94vw` counts the scrollbar, which can push the page wider than it can
+     actually show. Stay inside the column instead. */
+  .note-body .fugue {
+    position: static;
+    left: auto;
+    transform: none;
+    width: auto;
+  }
   .note-body .fugue-row {
     grid-template-columns: 1fr;
     gap: 0.9rem;
@@ -344,10 +353,20 @@ h1 {
   margin-bottom: 0;
 }
 
+/* Wide tables scroll inside this wrapper instead of widening the page. The
+   table stays a real table so it still fills the column when it fits. */
+.note-body .table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  margin: 0 0 1rem;
+}
+
 .note-body table {
   border-collapse: collapse;
   width: 100%;
-  margin: 0 0 1rem;
+  /* never squeeze columns below their content — overflow scrolls instead */
+  min-width: max-content;
+  margin: 0;
   font-size: 0.92rem;
 }
 
@@ -430,19 +449,37 @@ h1 {
   font-size: 0.9em;
 }
 
+/* Display math wider than the column scrolls inside its own box rather than
+   widening the page. Centering is done with flex `safe center` instead of
+   text-align: a centered overflow spills equally both ways and the left half
+   becomes unreachable, since you cannot scroll past a content box's start
+   edge. `safe` falls back to start-alignment exactly when it would overflow. */
+.note-body section {
+  display: flex;
+  justify-content: safe center;
+  margin: 1rem 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  /* keeps the scrollbar off the glyphs on platforms that reserve space */
+  padding-bottom: 0.15rem;
+}
+
+.note-body section > eqn {
+  display: block;
+  min-width: 0;
+}
+
 .note-body .katex-display {
   display: block;
-  margin: 1rem auto;
+  margin: 0;
+  /* the parent <section> is the scroll container; a nested one would trap
+     the left edge again */
+  overflow: visible;
   text-align: center;
-  overflow-x: auto;
 }
 
-.note-body section {
-  margin: 1rem 0;
-  text-align: center;
-  overflow-x: auto;
-}
-
-.note-body section:has(> .katex-display) {
-  text-align: center;
+/* Inline math must never widen the column either. */
+.note-body eq {
+  overflow-wrap: anywhere;
 }

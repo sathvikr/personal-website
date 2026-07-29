@@ -187,3 +187,99 @@ $$
 with character $\chi_{V \oplus W}(g) = \operatorname{tr}(\rho_{V \oplus W}(g)) = \operatorname{tr}(\rho_V(g)) + \operatorname{tr}(\rho_W(g)) = \chi_V(g) + \chi_W(g)$.
 
 Then, suppose $V \cong V_1 \oplus V_2 \oplus V_3$. This implies $\chi = \chi_1 + \chi_2 + \chi_3$. Conversely, if $\chi_V = 2\chi_1 + \chi_2$, this implies $V$ has decomposition $V \cong V_1 \oplus V_1 \oplus V_2$.
+
+**Character tables of direct products.**
+
+Suppose $G$ and $H$ are finite groups. A representation of $G \times H$ can be built from a representation of $G$ and a representation of $H$.
+
+Consider $\rho : G \to GL(V)$ and $\sigma : H \to GL(W)$. On the tensor product $V \otimes W$,[\[1\]](#fn-chartables-1) define
+
+$$
+(\rho \otimes \sigma)(g, h) = \rho(g) \otimes \sigma(h)
+$$
+
+**Aside 4.1.** An element $g \in G$ acts on $V$, and an element $h \in H$ acts on $W$. An element of $G \times H$ is a pair $(g, h)$. We want this pair to act on a vector space with both a $V$-part and a $W$-part. Call this $V \otimes W$. For now, think of its vectors as $v \otimes w$ for some $v, w \in V, W$ respectively. The definition of the $G \times H$ action is then $(g, h) \cdot (v \otimes w) = (g \cdot v) \otimes (h \cdot w)$ (since the action must be preserved). We observe that this is shorthand for $(\rho \otimes \sigma)(g, h)(v \otimes w) = \rho(g)(v) \otimes \sigma(h)(w)$.
+
+**Example 4.1** (Concrete one-dimensional example). Suppose $V$ and $W$ are both one-dimensional. Assume $\rho(g)v = 2v$ and $\sigma(h)w = -w$. Then on $v \otimes w$,
+
+$$
+\begin{aligned}
+(\rho \otimes \sigma)(g, h)(v \otimes w) &= \rho(g)v \otimes \sigma(h)w \\
+&= 2v \otimes -w \\
+&= -2(v \otimes w)
+\end{aligned}
+$$
+
+**Proposition 4.1.** The following character relation holds: $\chi_{\rho \otimes \sigma}(g, h) = \chi_\rho(g)\chi_\sigma(h)$.
+
+**Example 4.2.** The trace of a tensor product of matrices is the product of their traces,[\[2\]](#fn-chartables-2) so reasonably,
+
+$$
+\begin{aligned}
+\chi_{\rho \otimes \sigma}(g, h) &= \operatorname{tr}((\rho \otimes \sigma)(g, h)) \\
+&= \operatorname{tr}(\rho(g))\operatorname{tr}(\sigma(h)) \\
+&= \chi_\rho(g)\chi_\sigma(h)
+\end{aligned}
+$$
+
+**Example 4.3** ($C_2 \times C_2$). Let $C_2 = \langle s \mid s^2 = 1 \rangle$, with irreducible characters $\chi_1 = (1, 1)$ and $\chi_2 = (1, -1)$.
+
+Now, consider $C_2 \times C_2 = \{(1,1), (s,1), (1,s), (s,s)\}$. To build a character of $C_2 \times C_2$, we choose an irreducible character from the first $C_2$ copy and second from the second $C_2$ copy. Then, there are four possible irreducible characters: $\chi_1 \otimes \chi_1, \chi_1 \otimes \chi_2, \chi_2 \otimes \chi_1, \chi_2 \otimes \chi_2$. We find
+
+$$
+\begin{aligned}
+(\chi_1 \otimes \chi_1)(g_1, g_2) &= \chi_1(g_1)\chi_1(g_2) \\
+(\chi_1 \otimes \chi_2)(g_1, g_2) &= \chi_1(g_1)\chi_2(g_2) \\
+(\chi_2 \otimes \chi_1)(g_1, g_2) &= \chi_2(g_1)\chi_1(g_2) \\
+(\chi_2 \otimes \chi_2)(g_1, g_2) &= \chi_2(g_1)\chi_2(g_2)
+\end{aligned}
+$$
+
+and filling out the character table,
+
+$$
+\begin{array}{c|c|c|c|c}
+\text{class} & (1,1) & (1,s) & (s,1) & (s,s) \\
+\text{size} & 1 & 1 & 1 & 1 \\
+\hline
+\chi_1 \otimes \chi_1 & (1)(1) = 1 & (1)(1) = 1 & (1)(1) = 1 & (1)(1) = 1 \\
+\chi_1 \otimes \chi_2 & (1)(1) = 1 & (1)(-1) = -1 & (1)(1) = 1 & (1)(-1) = -1 \\
+\chi_2 \otimes \chi_1 & (1)(1) = 1 & (1)(1) = 1 & (-1)(1) = -1 & (-1)(1) = -1 \\
+\chi_2 \otimes \chi_2 & (1)(1) = 1 & (1)(-1) = -1 & (-1)(1) = -1 & (-1)(-1) = 1
+\end{array}
+$$
+
+**Example 4.4** ($S_3 \times S_3$). As another example, we consider $S_3 \times S_3$. Taking the irreducible characters from $S_3$, we find:
+
+$$
+\begin{aligned}
+\chi_1(g) &= 1 \\
+\chi_2(g) &= \operatorname{sgn}(g) \\
+\chi_3(g) &= (2, 0, -1)
+\end{aligned}
+$$
+
+We partially complete the $S_3 \times S_3$ character table.
+
+$$
+\begin{array}{c|c|c|c|c|c|c|c|c|c}
+\text{classes} & (1,1) & (1,2) & (1,3) & (2,1) & (2,2) & (2,3) & (3,1) & (3,2) & (3,3) \\
+\text{size} & 1 & 3 & 2 & 3 & 9 & 6 & 2 & 6 & 4 \\
+\hline
+\chi_1 \otimes \chi_1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\
+\chi_1 \otimes \chi_2 & (1)(1) & (1)(-1) & (1)(1) & (1)(1) & (1)(-1) & (1)(1) & (1)(1) & (1)(-1) & (1)(1) \\
+\chi_1 \otimes \chi_3 & & & & & & & & & \\
+\chi_2 \otimes \chi_1 & & & & & & & & & \\
+\chi_2 \otimes \chi_2 & & & & & & & & & \\
+\chi_2 \otimes \chi_3 & & & & & & & & & \\
+\chi_3 \otimes \chi_1 & & & & & & & & & \\
+\chi_3 \otimes \chi_2 & & & & & & & & & \\
+\chi_3 \otimes \chi_3 & & & & & & & & &
+\end{array}
+$$
+
+We leave the rest as an exercise to the reader.
+
+<p class="note-footnote" id="fn-chartables-1">For what the tensor product of two vectors is, its bilinearity, and a basis for the tensor product of two spaces, see <a href="notes.html#2026-04-15-introductory-notes-on-tensors">Introductory Notes on Tensors</a>.</p>
+
+<p class="note-footnote" id="fn-chartables-2">Derived from the block form of a tensor product of matrices in <a href="notes.html#2026-04-15-introductory-notes-on-tensors">Introductory Notes on Tensors</a>.</p>

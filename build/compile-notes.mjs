@@ -24,6 +24,11 @@ const md = new MarkdownIt({
     },
   });
 
+// Wrap tables so a table wider than the column scrolls on its own instead of
+// widening the whole page. The table element itself is left alone.
+md.renderer.rules.table_open = () => '<div class="table-scroll">\n<table>\n';
+md.renderer.rules.table_close = () => "</table>\n</div>\n";
+
 const esc = (s) =>
   String(s)
     .replace(/&/g, "&amp;")

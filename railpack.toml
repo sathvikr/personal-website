@@ -1,5 +1,0 @@
-[build]
-cmd = "npm run build:notes"
-
-[static]
-dir = "."

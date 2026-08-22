@@ -1,6 +1,7 @@
 ---
 title: "Notes, Ma 191c: Mathematical Models of Generative Linguistics"
 date: "2026-08-22"
+source: "[[lecture 1]](https://www.its.caltech.edu/~matilde/LinguisticsMa191c2024Lecture1.pdf) [[lecture 2]](https://www.its.caltech.edu/~matilde/LinguisticsMa191c2024Lecture2.pdf)"
 ---
 
 **What is linguistics?**

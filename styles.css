@@ -266,11 +266,18 @@ h1 {
   display: block;
 }
 
-/* Inline SVG diagrams scale with their figure the way images do. */
+/* Diagrams render at their natural size, so label text is the same size in
+   every figure regardless of how wide the drawing is. They shrink only when
+   the column is narrower than the drawing itself. */
 .note-body figure svg {
-  width: 100%;
+  display: inline-block;
+  max-width: 100%;
   height: auto;
-  display: block;
+}
+
+.note-body .note-diagram {
+  margin: 1.5rem 0;
+  text-align: center;
 }
 
 /* Boxed aside, e.g. the staged statement of a problem. */

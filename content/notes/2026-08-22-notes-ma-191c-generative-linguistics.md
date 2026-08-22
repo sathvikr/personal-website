@@ -17,62 +17,62 @@ Another example:
 
 The sentence has two possible syntactic structures.
 
-<figure class="note-image">
-<svg viewBox="0 0 640 250" role="img" aria-label="Syntax tree where the prepositional phrase in my pajamas attaches to the verb phrase." fill="none" stroke="currentColor" stroke-width="1">
+<figure class="note-diagram">
+<svg viewBox="0 0 520 215" width="520" height="215" role="img" aria-label="Syntax tree where the prepositional phrase in my pajamas attaches to the verb phrase." fill="none" stroke="currentColor" stroke-width="1">
 <g>
-<line x1="320" y1="32" x2="152" y2="68"></line>
-<line x1="320" y1="32" x2="420" y2="68"></line>
-<line x1="150" y1="88" x2="150" y2="124"></line>
-<line x1="418" y1="88" x2="302" y2="124"></line>
-<line x1="420" y1="88" x2="420" y2="124"></line>
-<line x1="422" y1="88" x2="543" y2="124"></line>
-<line x1="300" y1="144" x2="300" y2="184"></line>
-<line x1="420" y1="144" x2="420" y2="184"></line>
-<line x1="545" y1="144" x2="545" y2="184"></line>
+<line x1="256" y1="32" x2="126" y2="68"></line>
+<line x1="264" y1="32" x2="336" y2="68"></line>
+<line x1="120" y1="88" x2="120" y2="126"></line>
+<line x1="336" y1="88" x2="244" y2="126"></line>
+<line x1="340" y1="88" x2="340" y2="126"></line>
+<line x1="344" y1="88" x2="446" y2="126"></line>
+<line x1="240" y1="144" x2="240" y2="184"></line>
+<line x1="340" y1="144" x2="340" y2="184"></line>
+<line x1="450" y1="144" x2="450" y2="184"></line>
 </g>
 <g fill="currentColor" stroke="none" font-size="13" text-anchor="middle" font-family="Georgia, serif">
-<text x="320" y="24">S</text>
-<text x="150" y="82">NP</text>
-<text x="420" y="82">VP</text>
-<text x="150" y="138">I</text>
-<text x="300" y="138">V</text>
-<text x="420" y="138">NP</text>
-<text x="545" y="138">PP</text>
-<text x="300" y="198">shot</text>
-<text x="420" y="198">an elephant</text>
-<text x="545" y="198">in my pajamas</text>
+<text x="260" y="24">S</text>
+<text x="120" y="82">NP</text>
+<text x="340" y="82">VP</text>
+<text x="120" y="138">I</text>
+<text x="240" y="138">V</text>
+<text x="340" y="138">NP</text>
+<text x="450" y="138">PP</text>
+<text x="240" y="198">shot</text>
+<text x="340" y="198">an elephant</text>
+<text x="450" y="198">in my pajamas</text>
 </g>
 </svg>
 </figure>
 
 Here, *in my pajamas* modifies the verb phrase: I was wearing the pajamas when I shot the elephant.
 
-<figure class="note-image">
-<svg viewBox="0 0 640 310" role="img" aria-label="Syntax tree where the prepositional phrase in my pajamas attaches to the noun phrase an elephant." fill="none" stroke="currentColor" stroke-width="1">
+<figure class="note-diagram">
+<svg viewBox="0 0 520 275" width="520" height="275" role="img" aria-label="Syntax tree where the prepositional phrase in my pajamas attaches to the noun phrase an elephant." fill="none" stroke="currentColor" stroke-width="1">
 <g>
-<line x1="320" y1="32" x2="152" y2="68"></line>
-<line x1="320" y1="32" x2="430" y2="68"></line>
-<line x1="150" y1="88" x2="150" y2="124"></line>
-<line x1="428" y1="88" x2="332" y2="124"></line>
-<line x1="432" y1="88" x2="498" y2="124"></line>
-<line x1="330" y1="144" x2="330" y2="184"></line>
-<line x1="498" y1="144" x2="432" y2="180"></line>
-<line x1="502" y1="144" x2="573" y2="180"></line>
-<line x1="430" y1="200" x2="430" y2="240"></line>
-<line x1="575" y1="200" x2="575" y2="240"></line>
+<line x1="256" y1="32" x2="126" y2="68"></line>
+<line x1="264" y1="32" x2="326" y2="68"></line>
+<line x1="120" y1="88" x2="120" y2="126"></line>
+<line x1="326" y1="88" x2="254" y2="126"></line>
+<line x1="334" y1="88" x2="386" y2="126"></line>
+<line x1="250" y1="144" x2="250" y2="184"></line>
+<line x1="386" y1="144" x2="336" y2="180"></line>
+<line x1="394" y1="144" x2="450" y2="180"></line>
+<line x1="330" y1="200" x2="330" y2="240"></line>
+<line x1="455" y1="200" x2="455" y2="240"></line>
 </g>
 <g fill="currentColor" stroke="none" font-size="13" text-anchor="middle" font-family="Georgia, serif">
-<text x="320" y="24">S</text>
-<text x="150" y="82">NP</text>
-<text x="430" y="82">VP</text>
-<text x="150" y="138">I</text>
-<text x="330" y="138">V</text>
-<text x="500" y="138">NP</text>
-<text x="330" y="198">shot</text>
-<text x="430" y="194">NP</text>
-<text x="575" y="194">PP</text>
-<text x="430" y="254">an elephant</text>
-<text x="575" y="254">in my pajamas</text>
+<text x="260" y="24">S</text>
+<text x="120" y="82">NP</text>
+<text x="330" y="82">VP</text>
+<text x="120" y="138">I</text>
+<text x="250" y="138">V</text>
+<text x="390" y="138">NP</text>
+<text x="250" y="198">shot</text>
+<text x="330" y="194">NP</text>
+<text x="455" y="194">PP</text>
+<text x="330" y="254">an elephant</text>
+<text x="455" y="254">in my pajamas</text>
 </g>
 </svg>
 </figure>
@@ -85,26 +85,26 @@ Here, *in my pajamas* modifies the noun phrase *an elephant*: the elephant is in
 
 or as a tree,
 
-<figure class="note-image">
-<svg viewBox="0 0 380 260" role="img" aria-label="Morphology tree decomposing unfriendliness into un, friend, ly and ness." fill="none" stroke="currentColor" stroke-width="1">
+<figure class="note-diagram">
+<svg viewBox="0 0 300 262" width="300" height="262" role="img" aria-label="Morphology tree decomposing unfriendliness into un, friend, ly and ness." fill="none" stroke="currentColor" stroke-width="1">
 <g>
-<line x1="178" y1="32" x2="128" y2="66"></line>
-<line x1="182" y1="32" x2="240" y2="66"></line>
-<line x1="118" y1="88" x2="82" y2="122"></line>
-<line x1="126" y1="88" x2="168" y2="122"></line>
-<line x1="163" y1="144" x2="140" y2="178"></line>
-<line x1="171" y1="144" x2="208" y2="178"></line>
-<line x1="140" y1="200" x2="140" y2="236"></line>
+<line x1="146" y1="32" x2="112" y2="68"></line>
+<line x1="154" y1="32" x2="196" y2="68"></line>
+<line x1="100" y1="88" x2="72" y2="124"></line>
+<line x1="110" y1="88" x2="140" y2="124"></line>
+<line x1="141" y1="144" x2="124" y2="180"></line>
+<line x1="149" y1="144" x2="176" y2="180"></line>
+<line x1="120" y1="200" x2="120" y2="236"></line>
 </g>
 <g fill="currentColor" stroke="none" font-size="13" text-anchor="middle" font-family="Georgia, serif">
-<text x="180" y="24">N</text>
-<text x="120" y="82">Adj</text>
-<text x="248" y="82" font-style="italic">-ness</text>
-<text x="74" y="138" font-style="italic">un-</text>
-<text x="168" y="138">Adj</text>
-<text x="140" y="194">N</text>
-<text x="212" y="194" font-style="italic">-ly</text>
-<text x="140" y="250">friend</text>
+<text x="150" y="24">N</text>
+<text x="105" y="82">Adj</text>
+<text x="205" y="82" font-style="italic">-ness</text>
+<text x="65" y="138" font-style="italic">un-</text>
+<text x="145" y="138">Adj</text>
+<text x="120" y="194">N</text>
+<text x="180" y="194" font-style="italic">-ly</text>
+<text x="120" y="250">friend</text>
 </g>
 </svg>
 </figure>
@@ -227,27 +227,27 @@ $$
 
 It is clear this is a deterministic finite automaton:
 
-<figure class="note-image">
-<svg viewBox="0 0 360 140" role="img" aria-label="Deterministic finite automaton with start state S looping on 0 and accepting state A looping on 1." fill="none" stroke="currentColor" stroke-width="1.1">
+<figure class="note-diagram">
+<svg viewBox="0 0 300 120" width="300" height="120" role="img" aria-label="Deterministic finite automaton with start state S looping on 0 and accepting state A looping on 1." fill="none" stroke="currentColor" stroke-width="1.1">
 <defs>
-<marker id="dfa-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<marker id="dfa-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
 <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" stroke="none"></path>
 </marker>
 </defs>
-<line x1="60" y1="92" x2="126" y2="92" marker-end="url(#dfa-arrow)"></line>
-<circle cx="152" cy="92" r="24"></circle>
-<circle cx="272" cy="92" r="24"></circle>
-<circle cx="272" cy="92" r="28"></circle>
-<line x1="178" y1="92" x2="240" y2="92" marker-end="url(#dfa-arrow)"></line>
-<path d="M 138 70 C 128 34 176 34 166 70" marker-end="url(#dfa-arrow)"></path>
-<path d="M 258 66 C 248 30 296 30 286 66" marker-end="url(#dfa-arrow)"></path>
+<line x1="44" y1="70" x2="84" y2="70" marker-end="url(#dfa-arrow)"></line>
+<circle cx="108" cy="70" r="20"></circle>
+<circle cx="218" cy="70" r="20"></circle>
+<circle cx="218" cy="70" r="24"></circle>
+<line x1="130" y1="70" x2="190" y2="70" marker-end="url(#dfa-arrow)"></line>
+<path d="M 96 56 C 88 22 128 22 120 56" marker-end="url(#dfa-arrow)"></path>
+<path d="M 206 52 C 198 18 238 18 230 52" marker-end="url(#dfa-arrow)"></path>
 <g fill="currentColor" stroke="none" font-size="13" text-anchor="middle" font-family="Georgia, serif">
-<text x="30" y="96">start</text>
-<text x="152" y="97" font-style="italic">S</text>
-<text x="272" y="97" font-style="italic">A</text>
-<text x="209" y="84">1</text>
-<text x="152" y="34">0</text>
-<text x="272" y="30">1</text>
+<text x="22" y="74">start</text>
+<text x="108" y="75" font-style="italic">S</text>
+<text x="218" y="75" font-style="italic">A</text>
+<text x="160" y="61">1</text>
+<text x="108" y="20">0</text>
+<text x="218" y="16">1</text>
 </g>
 </svg>
 </figure>

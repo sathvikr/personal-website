@@ -2,11 +2,12 @@
 title: "Notes, Ma 191c: Government & Binding"
 date: "2026-08-24"
 source: "[[lecture 2]](https://www.its.caltech.edu/~matilde/LinguisticsMa191c2024Lecture2.pdf)"
+continues: "2026-08-23-notes-ma-191c-pre-minimalism-models"
 ---
 
 **Government and binding.**
 
-This is based on the [P&P model](notes.html#2026-08-23-notes-ma-191c-pre-minimalism-models).
+This is based on the P&P model.
 
 1. In a syntax tree, a node $X$ *dominates* a node $Y$ if $Y$ is an $n$-th grandchild of $X$.
 2. A *maximal projection* of a lexical head is the largest phrase built around that head. For example, in *eat the apple*, if "eat" is the head, then the whole phrase is the maximal projection of "eat."

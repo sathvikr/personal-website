@@ -4,6 +4,10 @@ date: "2026-08-23"
 source: "[[lecture 2]](https://www.its.caltech.edu/~matilde/LinguisticsMa191c2024Lecture2.pdf)"
 ---
 
+**Why trees are the real objects.**
+
+Grammars that focus on generating strings cause semantic ambiguity. Hence, we want ways to describe grammars that focus on generating trees directly.
+
 **Transformational grammar (Chomsky, 1957).**
 
 Sentences have
@@ -11,11 +15,11 @@ Sentences have
 1. Deep structure (closer to semantics): represents the sentence as a tree.
 2. Surface structure (language-specific) represents the sentence as a tree after some transformations.
 
-**Example 2.8.** Consider the sentence
+**Example 3.1.** Consider the sentence
 
 <p class="note-centered">John eats the apple.</p>
 
-**1.** *Deep structure* represents the sentence using a tree (imprecise, but bear with this):
+**1.** *Deep structure* represents the sentence using a tree (this is imprecise, but bear with this):
 
 <figure class="note-diagram">
 <svg viewBox="0 0 360 215" width="360" height="215" role="img" aria-label="Deep structure tree for John eats the apple." fill="none" stroke="currentColor" stroke-width="1">
@@ -80,7 +84,7 @@ Two components:
 
 So universal principles plus language-specific parameter settings compose a specific language's grammar. If you were to design a new language, you should note this.
 
-**Example 2.9.** Let's say "heads before complements" is a parameter. Then, for English (param=1) and Japanese (param=0) respectively, possible trees allowed by the grammar are:
+**Example 3.2.** Let's say "heads before complements" is a parameter. Then, for English (param=1) and Japanese (param=0) respectively, possible trees allowed by the grammar are:
 
 <figure class="note-diagram">
 <svg viewBox="0 0 460 160" width="460" height="160" role="img" aria-label="Two verb phrase trees: English with the verb before its complement, Japanese with the complement before the verb." fill="none" stroke="currentColor" stroke-width="1">

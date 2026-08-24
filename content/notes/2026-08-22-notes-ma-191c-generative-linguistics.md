@@ -6,9 +6,17 @@ source: "[[lecture 1]](https://www.its.caltech.edu/~matilde/LinguisticsMa191c202
 
 **What is linguistics?**
 
-**1.** Syntax is the subset of a language's grammar that has to do with how words legally combine into sentences. (Other subsets include morphology, which deals with how morphemes combine into words, and phonics, which deals with individual unit sounds.)
+Linguistics is the study of language. As an example, we might study a language's grammar or grammars universal to all languages.
 
-**2.** Language is not just a "sequence of words" because some sequences are structurally illegal. Rather, language is a "sequence of words that follows a template, paired with a hierarchy." The hierarchy is important, as the same word-sequence with different hierarchy can constitute different sentences:
+**Syntax and grammaticality.**
+
+Syntax is the subset of a language's grammar that has to do with how words legally combine into sentences. (Other subsets include morphology, which deals with how morphemes combine into words, and phonetics, which deals with individual unit sounds.)
+
+**Hierarchical structure and ambiguity.**
+
+Some key points:
+
+**1.** Sentences are not just "sequences of words." Rather, a sentence is a "sequence of words that follows a template, paired with a hierarchy." The hierarchy is important, as the same word-sequence with different hierarchy can constitute different sentences:
 
 <p class="note-centered">[I saw [the man with the telescope.]]<br>[I saw [the man][with the telescope.]]</p>
 
@@ -80,7 +88,7 @@ Here, *in my pajamas* modifies the verb phrase: I was wearing the pajamas when I
 
 Here, *in my pajamas* modifies the noun phrase *an elephant*: the elephant is in my pajamas.
 
-**3.** Language can be viewed as a "structure" because it is hierarchically composable. On the morpheme-level, consider:
+**2.** Language can be viewed as a "structure" because it is hierarchically composable. On the morpheme-level, consider:
 
 <p class="note-centered">(un-(friend)-ly))-ness</p>
 
@@ -112,20 +120,22 @@ or as a tree,
 
 These trees can be further composed to give a tree structure on the whole sentence.
 
-**4.** An *i-language* is a set of internal grammatical rules in each person's mind. Thus, i-languages for e.g. English differ person-to-person. There is some intuitive sense of "this sentence feels right" (grammaticality) that each person has based on their specific i-language.
+**i-languages.**
 
-**5.** There might be some math involved in linguistics; namely, operators defined on the language-trees.
+An *i-language* is a set of internal grammatical rules in each person's mind. Thus, i-languages for e.g. English differ person-to-person. There is some intuitive sense of "this sentence feels right" (grammaticality) that each person has based on their specific i-language.
 
-**Generative linguistics: formal languages.**
+**Formal languages: an early model of syntax.**
 
-Formal languages describe strings of words recognizable by varying classes of automata (called Chomsky hierarchy).
-
-Structures that give rise to formal languages:
+Formal languages describe strings of words recognizable by varying classes of automata (called Chomsky hierarchy). Structures that give rise to formal languages:
 
 - Programming languages
 - Some discrete group presentations
 
-The question: which classes of automata can recognize *natural languages*? A grammar is a quadruple
+The question: which classes of automata can recognize *natural languages*?
+
+**Grammars and production rules.**
+
+A grammar is a quadruple
 
 $$
 \mathcal{G} = (V_N, V_T, P, S)
@@ -179,27 +189,9 @@ $$
 
 in terms of expressive power.
 
-**Example 2.2** (Context-sensitive grammar). Consider the context-sensitive grammar $\mathcal{G} = (\{S, B, C\}, \{a, b, c\}, P, S)$, with production rules
+**Context-free vs. regular (memory).**
 
-$$
-\begin{aligned}
-S &\to aSBC, \quad S \to aBC, \quad CB \to BC, \\
-aB &\to ab, \quad bB \to bb, \quad bC \to bc, \quad cC \to cc
-\end{aligned}
-$$
-
-Then, we find possible strings are
-
-- $S \Rightarrow aBC \Rightarrow abC \Rightarrow abc$
-- $S \Rightarrow aSBC \Rightarrow aaBCBC \Rightarrow aabCBC \Rightarrow aabBCC \Rightarrow aabbCC \Rightarrow aabbcC \Rightarrow aabbcc$
-
-and in general,
-
-$$
-L_{\mathcal{G}} = \{a^n b^n c^n : n \geq 1\}
-$$
-
-**Example 2.3** (Context-free grammar). Take the context-free grammar $\mathcal{G} = (\{S\}, \{0, 1\}, P, S)$ where the production rules are given by
+**Example 2.2** (Context-free grammar). Take the context-free grammar $\mathcal{G} = (\{S\}, \{0, 1\}, P, S)$ where the production rules are given by
 
 $$
 S \to 0S1, \quad S \to 01
@@ -220,7 +212,7 @@ $$
 
 We know this $L_{\mathcal{G}}$ is not regular, because finite automata have *fixed memory*; remembering $n$ requires storing a variable.
 
-**Example 2.4** (Regular grammars). Consider $\mathcal{G} = (\{S, A\}, \{0, 1\}, P, S)$, with production rules
+**Example 2.3** (Regular grammar). Consider $\mathcal{G} = (\{S, A\}, \{0, 1\}, P, S)$, with production rules
 
 $$
 S \to 0S, \quad S \to A, \quad A \to 1A, \quad A \to 1
@@ -255,9 +247,9 @@ It is clear this is a deterministic finite automaton:
 
 with $A$ as a terminal state. We observe that right-linear production rules yield finite automata, as the nonterminals $\{S, A\}$ can be viewed as states with terminals (or $\varepsilon$) as transitions. This further cements the idea that regular grammars are constrained (right-linear) context-free grammars.
 
-**How good are CFGs at representing natural language?**
+**Languages beyond context-free (e.g., Swiss-German).**
 
-We show not-context-free by highlighting cross-serial dependencies in the language. [Why cross-serial dependencies yield context-free grammars?]
+We show a language is not context-free by highlighting cross-serial dependencies in the language. [Why cross-serial dependencies yield context-free grammars?]
 
 Some examples of context-sensitive languages:
 
@@ -274,7 +266,57 @@ for example, "Jan säit das mer (d'chind)$^n$ (em Hans)$^m$ es huus hälfed wele
 
 However, in general, context-sensitive grammars are overkill for representing natural languages. What is the weakest grammar able to represent natural languages?
 
-**Formal languages of finitely presented groups.**
+**Mild context sensitivity.**
+
+Context-sensitive languages are an example of a class beyond context-free.
+
+**Example 2.4** (Context-sensitive grammar). Consider the context-sensitive grammar $\mathcal{G} = (\{S, B, C\}, \{a, b, c\}, P, S)$, with production rules
+
+$$
+\begin{aligned}
+S &\to aSBC, \quad S \to aBC, \quad CB \to BC, \\
+aB &\to ab, \quad bB \to bb, \quad bC \to bc, \quad cC \to cc
+\end{aligned}
+$$
+
+Then, we find possible strings are
+
+- $S \Rightarrow aBC \Rightarrow abC \Rightarrow abc$
+- $S \Rightarrow aSBC \Rightarrow aaBCBC \Rightarrow aabCBC \Rightarrow aabBCC \Rightarrow aabbCC \Rightarrow aabbcC \Rightarrow aabbcc$
+
+and in general,
+
+$$
+L_{\mathcal{G}} = \{a^n b^n c^n : n \geq 1\}
+$$
+
+**Boundaries of Babel problem.**
+
+How do we formally characterize the space of natural languages? It is between context-sensitive and context-free. What is the *geometry* of this space? (Geometry basically means we represent each language as a point, in a space with dimensions such as "head size.")
+
+We want a formal model to describe natural languages. Formal languages are no longer viewed a good way to model generative syntax.
+
+- They focus on strings rather than structures. Remember that the same string can have different meanings based on the hierarchy. Only focusing on the strings means that the hierarchy information is not generated.
+- The production rules get too complicated.
+- There are too many languages in the context-sensitive class that are not natural languages.
+
+<div class="note-callout">
+Stage 1: string problem<br>
+CFGs are too weak for some natural-language dependencies<br>
+&#8659;<br>
+need mildly context-sensitive power
+</div>
+
+<div class="note-callout">
+Stage 2: structure problem<br>
+Knowing which strings are legal isn't enough<br>
+&#8659;<br>
+need a theory that actually generates syntactic structures
+</div>
+
+So, context-sensitive grammar is more powerful about strings, not automatically better about trees.
+
+**Appendix: formal languages of finitely presented groups.**
 
 Consider a situation where the grammar is a finite group, e.g., $\mathcal{G} = G = \langle X \mid R \rangle$. Then,
 
@@ -282,24 +324,28 @@ $$
 L_G = \{w \in \hat{X}^{\star} : w = 1_G\}
 $$
 
-**Example 2.5.** Consider $G = C_3 = \langle a \mid a^3 = 1 \rangle$. Then, $\hat{X} = \{a, a^{-1}\}$, and
+**Example 6.1.** Consider $G = C_3 = \langle a \mid a^3 = 1 \rangle$. Then, $\hat{X} = \{a, a^{-1}\}$, and
 
 $$
 L_G = \{a^n : n \equiv 0 \mod 3\}
 $$
 
-**Example 2.6.** Consider $G = D_8 = \langle r, s \mid r^4 = s^2 = 1, srs = r^{-1} \rangle$. Then, $\hat{X} = \{r, r^3, s\}$, and
+**Example 6.2.** Consider $G = D_8 = \langle r, s \mid r^4 = s^2 = 1, srs = r^{-1} \rangle$. Then, $\hat{X} = \{r, r^3, s\}$, and
 
 $$
 L_G = \{w \in \{r, r^3, s\}^{\star} : w = 1\}
 $$
 
-What kind of formal languages can be represented by such finite groups? Algebraic properties of $G$ correspond to the properties of $L_G$. Note that:
+What kind of formal languages can be represented by such finite groups?
 
-1. $L_G$ is *regular* iff $G$ is finite.
-2. $L_G$ is context-free iff $G$ has a free subgroup of finite index.
+**Anisimov and Muller-Schupp.**
 
-**Example 2.7.** Take the infinite group $G = SL_2(\mathbb{Z}) = \langle S, T \mid S^4 = I, S^2 = (ST)^3 \rangle$, where
+Algebraic properties of $G$ correspond to the properties of $L_G$. Note that:
+
+1. $L_G$ is *regular* iff. $G$ is finite (Anisimov's Theorem).
+2. $L_G$ is context-free iff. $G$ has a free subgroup of finite index (Muller-Schupp Theorem).
+
+**Example 6.3.** Take the infinite group $G = SL_2(\mathbb{Z}) = \langle S, T \mid S^4 = I, S^2 = (ST)^3 \rangle$, where
 
 $$
 S = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}, \quad T = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}
@@ -330,29 +376,3 @@ $$
 so $[SL_2(\mathbb{Z}) : \Gamma(2)] = |SL_2(\mathbb{F}_2)| = 6$. Similarly, since $\Gamma(2) = F_2 \sqcup -IF_2$, $[\Gamma(2) : F_2] = 2$, and $[SL_2(\mathbb{Z}) : F_2] = [SL_2(\mathbb{Z}) : \Gamma(2)][\Gamma(2) : F_2] = (6)(2) = 12$. Since $G$ has a free subgroup $H$ of finite index, $L_G$ is context-free.
 
 This section just shows that there is a nice tie between groups and languages. It doesn't mean we have to use them over production rules.
-
-**Boundaries of Babel problem.**
-
-How do we formally characterize the space of natural languages? It is between context-sensitive and context-free. What is the *geometry* of this space? (Geometry basically means we represent each language as a point, with dimensions such as "head size.")
-
-We want a formal model to describe natural languages. Formal languages are no longer viewed a good way to model generative syntax.
-
-- They focus on strings rather than structures. Remember that the same string can have different meanings based on the hierarchy. Only focusing on the strings means that the hierarchy information is not generated.
-- The production rules get too complicated.
-- There are too many languages in the context-sensitive class that are not natural languages.
-
-<div class="note-callout">
-Stage 1: string problem<br>
-CFGs are too weak for some natural-language dependencies<br>
-&#8659;<br>
-need mildly context-sensitive power
-</div>
-
-<div class="note-callout">
-Stage 2: structure problem<br>
-Knowing which strings are legal isn't enough<br>
-&#8659;<br>
-need a theory that actually generates syntactic structures
-</div>
-
-So, context-sensitive grammar is more powerful about strings, not automatically better about trees.

@@ -116,6 +116,21 @@ const cssVersion = async () => {
 };
 
 const buildNotesPage = (items, cssVer) => {
+  // A note may declare `continues: <slug>` to mark it as a direct continuation
+  // of another note. The link is written once and rendered in both directions:
+  // the later note says "Continues X", the earlier one says "Continued in Y".
+  const bySlug = new Map(items.map((x) => [x.slug, x]));
+  const continuedBy = new Map();
+  for (const it of items) {
+    if (!it.data.continues) continue;
+    const target = String(it.data.continues);
+    if (!bySlug.has(target)) {
+      console.warn(`  ! continues: unknown slug "${target}" in ${it.slug}`);
+      continue;
+    }
+    continuedBy.set(target, [...(continuedBy.get(target) || []), it]);
+  }
+
   const blocks = items
     .map((it, i) => {
       const bodyHtml = md.render(it.content);
@@ -125,11 +140,21 @@ const buildNotesPage = (items, cssVer) => {
       const sourceHtml = it.data.source
         ? `\n    <p class="note-source">${md.renderInline(String(it.data.source))}</p>`
         : "";
+      const prev = it.data.continues ? bySlug.get(String(it.data.continues)) : null;
+      const rel = [
+        ...(prev ? [`Continues <a href="#${prev.slug}">${esc(prev.title)}</a>.`] : []),
+        ...(continuedBy.get(it.slug) || []).map(
+          (n) => `Continued in <a href="#${n.slug}">${esc(n.title)}</a>.`
+        ),
+      ];
+      const relHtml = rel.length
+        ? `\n    <p class="note-continues">${rel.join(" ")}</p>`
+        : "";
       const sec = `  <section class="note-block" id="${sid}" aria-labelledby="${titleId}">
     <h2 class="note-inline-title" id="${titleId}">${esc(
         it.title
       )}<a class="note-permalink" href="#${sid}" aria-label="Copy link to this note" title="Copy link to this note"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></a></h2>
-    <p class="note-inline-date">${esc(long)}</p>${sourceHtml}
+    <p class="note-inline-date">${esc(long)}</p>${sourceHtml}${relHtml}
     <div class="note-body">
 ${bodyHtml}
     </div>

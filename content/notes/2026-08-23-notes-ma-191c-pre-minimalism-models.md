@@ -1,6 +1,7 @@
 ---
 title: "Notes, Ma 191c: Pre-minimalism Linguistic Models"
 date: "2026-08-23"
+source: "[[lecture 2]](https://www.its.caltech.edu/~matilde/LinguisticsMa191c2024Lecture2.pdf)"
 ---
 
 **Transformational grammar (Chomsky, 1957).**
